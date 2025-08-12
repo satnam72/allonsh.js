@@ -55,6 +55,7 @@ Before committing, format your code by running:
 
 ```bash
 npm run format
+```
 
 This will automatically format all files based on the project’s Prettier configuration.
 
@@ -83,4 +84,3 @@ Be respectful and courteous. We aim for an inclusive and welcoming community.
 ---
 
 Thank you for contributing to allonsh.js!
-```
