@@ -47,6 +47,19 @@ Please write clear, concise commit messages using this format.
 
 ---
 
+## Code Formatting
+
+This project uses [Prettier](https://prettier.io/) to ensure consistent code style.
+
+Before committing, format your code by running:
+
+```bash
+npm run format
+
+This will automatically format all files based on the project’s Prettier configuration.
+
+---
+
 ## Testing
 
 - Run tests locally with: npm test
@@ -70,3 +83,4 @@ Be respectful and courteous. We aim for an inclusive and welcoming community.
 ---
 
 Thank you for contributing to allonsh.js!
+```

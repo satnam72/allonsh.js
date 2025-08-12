@@ -1,48 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>allonsh.js Demo</title>
-  <style>
-    .draggable {
-      width: 100px;
-      height: 100px;
-      background-color: tomato;
-      margin: 20px;
-      cursor: grab;
-      user-select: none;
-    }
-    .dropzone {
-      width: 300px;
-      height: 200px;
-      background-color: lightgray;
-      margin: 20px;
-      border: 2px dashed #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: sans-serif;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <div class="draggable">Drag me</div>
-  <div class="dropzone">Drop zone</div>
-
-  <script type="module">
-    import { makeDraggable } from '../src/allonsh.js';
-
-    makeDraggable({
-      selector: '.draggable',
-      onDrop(source, target) {
-        if (target && target.classList.contains('dropzone')) {
-          alert('Dropped inside drop zone!');
-        } else {
-          alert('Dropped outside drop zone!');
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <title>allonsh.js Demo</title>
+    <style>
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: tomato;
+        margin: 20px;
+        cursor: grab;
+        user-select: none;
       }
-    });
-  </script>
-</body>
+      .dropzone {
+        width: 300px;
+        height: 200px;
+        background-color: lightgray;
+        margin: 20px;
+        border: 2px dashed #888;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="draggable">Drag me</div>
+    <div class="dropzone">Drop zone</div>
+
+    <script type="module">
+      import { makeDraggable } from '../src/allonsh.js';
+
+      makeDraggable({
+        selector: '.draggable',
+        onDrop(source, target) {
+          if (target && target.classList.contains('dropzone')) {
+            alert('Dropped inside drop zone!');
+          } else {
+            alert('Dropped outside drop zone!');
+          }
+        },
+      });
+    </script>
+  </body>
 </html>

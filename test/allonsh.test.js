@@ -1,4 +1,3 @@
-
 import { makeDraggable } from '../src/allonsh.js';
 
 // basic test

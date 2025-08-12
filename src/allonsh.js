@@ -1,5 +1,5 @@
 export function makeDraggable({ selector, onDrop }) {
-  document.querySelectorAll(selector).forEach(el => {
+  document.querySelectorAll(selector).forEach((el) => {
     el.addEventListener('pointerdown', (e) => {
       const clone = el.cloneNode(true);
       clone.style.position = 'fixed';

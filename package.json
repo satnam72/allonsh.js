@@ -7,13 +7,20 @@
     "test": "test"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "format": "prettier --write ."
   },
-  "keywords": ["drag-and-drop", "javascript", "library", "elementFromPoint"],
+  "keywords": [
+    "drag-and-drop",
+    "javascript",
+    "library",
+    "elementFromPoint"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "vitest": "^latest",
-    "jsdom": "^latest"
+    "jsdom": "latest",
+    "prettier": "^3.6.2",
+    "vitest": "latest"
   }
 }
