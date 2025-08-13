@@ -46,20 +46,71 @@ class Allonsh {
   _onMouseMove(event) {
     if (!this.draggedElement) return;
 
-    this.draggedElement.style.left = event.clientX - this.offsetX + 'px';
-    this.draggedElement.style.top = event.clientY - this.offsetY + 'px';
+    const draggedEl = this.draggedElement;
+    const dragRect = draggedEl.getBoundingClientRect();
 
-    this.draggedElement.style.pointerEvents = 'none';
+    // Calculate new desired position relative to viewport
+    let newLeft = event.clientX - this.offsetX;
+    let newTop = event.clientY - this.offsetY;
+
+    // Viewport dimensions
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Scroll positions
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Width and height of dragged element
+    const elWidth = dragRect.width;
+    const elHeight = dragRect.height;
+
+    // Check boundaries and scroll if possible, else clamp
+
+    // Horizontal (left)
+    if (newLeft < 0) {
+      if (scrollX > 0) {
+        window.scrollBy(newLeft, 0);
+      }
+      newLeft = Math.max(newLeft, 0);
+    } else if (newLeft + elWidth > vw) {
+      const maxScrollX = document.documentElement.scrollWidth - vw;
+      if (scrollX < maxScrollX) {
+        window.scrollBy(newLeft + elWidth - vw, 0);
+      }
+      newLeft = Math.min(newLeft, vw - elWidth);
+    }
+
+    // Vertical (top)
+    if (newTop < 0) {
+      if (scrollY > 0) {
+        window.scrollBy(0, newTop);
+      }
+      newTop = Math.max(newTop, 0);
+    } else if (newTop + elHeight > vh) {
+      const maxScrollY = document.documentElement.scrollHeight - vh;
+      if (scrollY < maxScrollY) {
+        window.scrollBy(0, newTop + elHeight - vh);
+      }
+      newTop = Math.min(newTop, vh - elHeight);
+    }
+
+    // Apply new position relative to document (scroll + viewport offset)
+    draggedEl.style.left = scrollX + newLeft + 'px';
+    draggedEl.style.top = scrollY + newTop + 'px';
+
+    // Drag over detection
+    draggedEl.style.pointerEvents = 'none';
     const elementBelow = document.elementFromPoint(
       event.clientX,
       event.clientY
     );
-    this.draggedElement.style.pointerEvents = 'auto';
+    draggedEl.style.pointerEvents = 'auto';
 
-    if (elementBelow && elementBelow !== this.draggedElement) {
+    if (elementBelow && elementBelow !== draggedEl) {
       elementBelow.dispatchEvent(
         new CustomEvent('allonsh-dragover', {
-          detail: { draggedEl: this.draggedElement, originalEvent: event },
+          detail: { draggedEl, originalEvent: event },
         })
       );
     }
@@ -82,7 +133,6 @@ class Allonsh {
         })
       );
 
-      // Auto-snap to center if enabled AND dropped on a registered dropzone
       if (this._snapToCenterEnabled && this._dropzones.has(elementBelow)) {
         this._applySnapToCenter(this.draggedElement, elementBelow);
       }
@@ -104,7 +154,7 @@ class Allonsh {
     const dropzone = document.querySelector(selector);
     if (!dropzone) return;
 
-    this._dropzones.add(dropzone); // Track this dropzone
+    this._dropzones.add(dropzone);
 
     dropzone.addEventListener('allonsh-dragover', () => {
       dropzone.classList.add('dragover');
