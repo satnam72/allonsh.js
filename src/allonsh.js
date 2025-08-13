@@ -16,7 +16,7 @@ class Allonsh {
   }
 
   _initialize() {
-    this.draggables.forEach(element => {
+    this.draggables.forEach((element) => {
       element.style.position = 'absolute';
       element.style.cursor = 'grab';
       element.addEventListener('mousedown', this._onMouseDown);
@@ -36,25 +36,32 @@ class Allonsh {
     document.addEventListener('mousemove', this._onMouseMove);
     document.addEventListener('mouseup', this._onMouseUp);
 
-    this.draggedElement.dispatchEvent(new CustomEvent('allonsh-dragstart', {
-      detail: { originalEvent: event }
-    }));
+    this.draggedElement.dispatchEvent(
+      new CustomEvent('allonsh-dragstart', {
+        detail: { originalEvent: event },
+      })
+    );
   }
 
   _onMouseMove(event) {
     if (!this.draggedElement) return;
 
-    this.draggedElement.style.left = (event.clientX - this.offsetX) + 'px';
-    this.draggedElement.style.top = (event.clientY - this.offsetY) + 'px';
+    this.draggedElement.style.left = event.clientX - this.offsetX + 'px';
+    this.draggedElement.style.top = event.clientY - this.offsetY + 'px';
 
     this.draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(event.clientX, event.clientY);
+    const elementBelow = document.elementFromPoint(
+      event.clientX,
+      event.clientY
+    );
     this.draggedElement.style.pointerEvents = 'auto';
 
     if (elementBelow && elementBelow !== this.draggedElement) {
-      elementBelow.dispatchEvent(new CustomEvent('allonsh-dragover', {
-        detail: { draggedEl: this.draggedElement, originalEvent: event }
-      }));
+      elementBelow.dispatchEvent(
+        new CustomEvent('allonsh-dragover', {
+          detail: { draggedEl: this.draggedElement, originalEvent: event },
+        })
+      );
     }
   }
 
@@ -62,13 +69,18 @@ class Allonsh {
     if (!this.draggedElement) return;
 
     this.draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(event.clientX, event.clientY);
+    const elementBelow = document.elementFromPoint(
+      event.clientX,
+      event.clientY
+    );
     this.draggedElement.style.pointerEvents = 'auto';
 
     if (elementBelow && elementBelow !== this.draggedElement) {
-      elementBelow.dispatchEvent(new CustomEvent('allonsh-drop', {
-        detail: { draggedEl: this.draggedElement, originalEvent: event }
-      }));
+      elementBelow.dispatchEvent(
+        new CustomEvent('allonsh-drop', {
+          detail: { draggedEl: this.draggedElement, originalEvent: event },
+        })
+      );
 
       // Auto-snap to center if enabled AND dropped on a registered dropzone
       if (this._snapToCenterEnabled && this._dropzones.has(elementBelow)) {
@@ -121,18 +133,18 @@ class Allonsh {
    * Applies snap-to-center logic to a dragged element.
    * @private
    */
-   _applySnapToCenter(draggedElement, dropzone) {
-  const dropRect = dropzone.getBoundingClientRect();
-  const dragRect = draggedElement.getBoundingClientRect();
+  _applySnapToCenter(draggedElement, dropzone) {
+    const dropRect = dropzone.getBoundingClientRect();
+    const dragRect = draggedElement.getBoundingClientRect();
 
-  const scrollX = window.scrollX || window.pageXOffset;
-  const scrollY = window.scrollY || window.pageYOffset;
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
 
-  draggedElement.style.left =
-    scrollX + dropRect.left + dropRect.width / 2 - dragRect.width / 2 + 'px';
-  draggedElement.style.top =
-    scrollY + dropRect.top + dropRect.height / 2 - dragRect.height / 2 + 'px';
-}
+    draggedElement.style.left =
+      scrollX + dropRect.left + dropRect.width / 2 - dragRect.width / 2 + 'px';
+    draggedElement.style.top =
+      scrollY + dropRect.top + dropRect.height / 2 - dragRect.height / 2 + 'px';
+  }
 }
 
 // Export default for ES modules

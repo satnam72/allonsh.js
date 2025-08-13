@@ -1,78 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Allonsh.js Demo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .draggable {
-      width: 100px;
-      height: 100px;
-      background-color: #4CAF50;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      position: absolute;
-      top: 50px;
-      left: 50px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .dropzone {
-      width: 200px;
-      height: 200px;
-      border: 3px dashed #333;
-      margin-top: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-      font-weight: bold;
-      border-radius: 12px;
-      transition: background-color 0.3s;
-    }
-    .dropzone.dragover {
-      background-color: #d3f9d8;
-      border-color: #4CAF50;
-    }
-  </style>
-</head>
-<body>
-  <h1>Allonsh.js Drag & Drop Demo</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Allonsh.js Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: #4caf50;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .dropzone {
+        width: 200px;
+        height: 200px;
+        border: 3px dashed #333;
+        margin-top: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-weight: bold;
+        border-radius: 12px;
+        transition: background-color 0.3s;
+      }
+      .dropzone.dragover {
+        background-color: #d3f9d8;
+        border-color: #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Allonsh.js Drag & Drop Demo</h1>
 
-  <div class="draggable" style="top: 100px; left: 100px;">Drag me</div>
+    <div class="draggable" style="top: 100px; left: 100px">Drag me</div>
 
-  <div class="dropzone" id="dropzone">Drop here</div>
+    <div class="dropzone" id="dropzone">Drop here</div>
 
-  <script type="module">
-    import Allonsh from '../src/allonsh.js';
+    <script type="module">
+      import Allonsh from '../src/allonsh.js';
 
-    const allonsh = new Allonsh('.draggable');
+      const allonsh = new Allonsh('.draggable');
 
-    const dropzone = document.getElementById('dropzone');
+      const dropzone = document.getElementById('dropzone');
 
-    dropzone.addEventListener('allonsh-dragover', () => {
-      dropzone.classList.add('dragover');
-    });
+      dropzone.addEventListener('allonsh-dragover', () => {
+        dropzone.classList.add('dragover');
+      });
 
-    dropzone.addEventListener('allonsh-drop', (e) => {
-      dropzone.classList.remove('dragover');
-      alert('Dropped ' + e.detail.draggedEl.textContent + ' into dropzone!');
-      // Example: snap dragged element into dropzone center
-      const rect = dropzone.getBoundingClientRect();
-      e.detail.draggedEl.style.left = rect.left + rect.width / 2 - 50 + 'px';
-      e.detail.draggedEl.style.top = rect.top + rect.height / 2 - 50 + 'px';
-    });
+      dropzone.addEventListener('allonsh-drop', (e) => {
+        dropzone.classList.remove('dragover');
+        alert('Dropped ' + e.detail.draggedEl.textContent + ' into dropzone!');
+        // Example: snap dragged element into dropzone center
+        const rect = dropzone.getBoundingClientRect();
+        e.detail.draggedEl.style.left = rect.left + rect.width / 2 - 50 + 'px';
+        e.detail.draggedEl.style.top = rect.top + rect.height / 2 - 50 + 'px';
+      });
 
-    document.addEventListener('allonsh-dragstart', () => {
-      dropzone.classList.remove('dragover');
-    });
-  </script>
-</body>
+      document.addEventListener('allonsh-dragstart', () => {
+        dropzone.classList.remove('dragover');
+      });
+    </script>
+  </body>
 </html>
