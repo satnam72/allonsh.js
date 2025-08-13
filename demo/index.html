@@ -58,7 +58,8 @@
       const dropzone = document.getElementById('dropzone');
 
       const dragManager = new Allonsh('.draggable');
-      dragManager.enableSnapToCenter(true);
+      dragManager.enableSnapping(true);
+      dragManager.setSnapMode('bottom-right');
 
       dragManager.registerDropzone('#dropzone', (draggedEl, dropzone) => {
         console.log('Dropped:', draggedEl.textContent);
