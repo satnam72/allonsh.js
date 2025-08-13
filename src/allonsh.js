@@ -16,7 +16,7 @@ class Allonsh {
   }
 
   _initialize() {
-    this.draggables.forEach(element => {
+    this.draggables.forEach((element) => {
       element.style.position = 'absolute';
       element.style.cursor = 'grab';
       element.addEventListener('mousedown', this._onMouseDown);
@@ -36,25 +36,83 @@ class Allonsh {
     document.addEventListener('mousemove', this._onMouseMove);
     document.addEventListener('mouseup', this._onMouseUp);
 
-    this.draggedElement.dispatchEvent(new CustomEvent('allonsh-dragstart', {
-      detail: { originalEvent: event }
-    }));
+    this.draggedElement.dispatchEvent(
+      new CustomEvent('allonsh-dragstart', {
+        detail: { originalEvent: event },
+      })
+    );
   }
 
   _onMouseMove(event) {
     if (!this.draggedElement) return;
 
-    this.draggedElement.style.left = (event.clientX - this.offsetX) + 'px';
-    this.draggedElement.style.top = (event.clientY - this.offsetY) + 'px';
+    const draggedEl = this.draggedElement;
+    const dragRect = draggedEl.getBoundingClientRect();
 
-    this.draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(event.clientX, event.clientY);
-    this.draggedElement.style.pointerEvents = 'auto';
+    // Calculate new desired position relative to viewport
+    let newLeft = event.clientX - this.offsetX;
+    let newTop = event.clientY - this.offsetY;
 
-    if (elementBelow && elementBelow !== this.draggedElement) {
-      elementBelow.dispatchEvent(new CustomEvent('allonsh-dragover', {
-        detail: { draggedEl: this.draggedElement, originalEvent: event }
-      }));
+    // Viewport dimensions
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Scroll positions
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Width and height of dragged element
+    const elWidth = dragRect.width;
+    const elHeight = dragRect.height;
+
+    // Check boundaries and scroll if possible, else clamp
+
+    // Horizontal (left)
+    if (newLeft < 0) {
+      if (scrollX > 0) {
+        window.scrollBy(newLeft, 0);
+      }
+      newLeft = Math.max(newLeft, 0);
+    } else if (newLeft + elWidth > vw) {
+      const maxScrollX = document.documentElement.scrollWidth - vw;
+      if (scrollX < maxScrollX) {
+        window.scrollBy(newLeft + elWidth - vw, 0);
+      }
+      newLeft = Math.min(newLeft, vw - elWidth);
+    }
+
+    // Vertical (top)
+    if (newTop < 0) {
+      if (scrollY > 0) {
+        window.scrollBy(0, newTop);
+      }
+      newTop = Math.max(newTop, 0);
+    } else if (newTop + elHeight > vh) {
+      const maxScrollY = document.documentElement.scrollHeight - vh;
+      if (scrollY < maxScrollY) {
+        window.scrollBy(0, newTop + elHeight - vh);
+      }
+      newTop = Math.min(newTop, vh - elHeight);
+    }
+
+    // Apply new position relative to document (scroll + viewport offset)
+    draggedEl.style.left = scrollX + newLeft + 'px';
+    draggedEl.style.top = scrollY + newTop + 'px';
+
+    // Drag over detection
+    draggedEl.style.pointerEvents = 'none';
+    const elementBelow = document.elementFromPoint(
+      event.clientX,
+      event.clientY
+    );
+    draggedEl.style.pointerEvents = 'auto';
+
+    if (elementBelow && elementBelow !== draggedEl) {
+      elementBelow.dispatchEvent(
+        new CustomEvent('allonsh-dragover', {
+          detail: { draggedEl, originalEvent: event },
+        })
+      );
     }
   }
 
@@ -62,15 +120,19 @@ class Allonsh {
     if (!this.draggedElement) return;
 
     this.draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(event.clientX, event.clientY);
+    const elementBelow = document.elementFromPoint(
+      event.clientX,
+      event.clientY
+    );
     this.draggedElement.style.pointerEvents = 'auto';
 
     if (elementBelow && elementBelow !== this.draggedElement) {
-      elementBelow.dispatchEvent(new CustomEvent('allonsh-drop', {
-        detail: { draggedEl: this.draggedElement, originalEvent: event }
-      }));
+      elementBelow.dispatchEvent(
+        new CustomEvent('allonsh-drop', {
+          detail: { draggedEl: this.draggedElement, originalEvent: event },
+        })
+      );
 
-      // Auto-snap to center if enabled AND dropped on a registered dropzone
       if (this._snapToCenterEnabled && this._dropzones.has(elementBelow)) {
         this._applySnapToCenter(this.draggedElement, elementBelow);
       }
@@ -92,7 +154,7 @@ class Allonsh {
     const dropzone = document.querySelector(selector);
     if (!dropzone) return;
 
-    this._dropzones.add(dropzone); // Track this dropzone
+    this._dropzones.add(dropzone);
 
     dropzone.addEventListener('allonsh-dragover', () => {
       dropzone.classList.add('dragover');
@@ -121,18 +183,18 @@ class Allonsh {
    * Applies snap-to-center logic to a dragged element.
    * @private
    */
-   _applySnapToCenter(draggedElement, dropzone) {
-  const dropRect = dropzone.getBoundingClientRect();
-  const dragRect = draggedElement.getBoundingClientRect();
+  _applySnapToCenter(draggedElement, dropzone) {
+    const dropRect = dropzone.getBoundingClientRect();
+    const dragRect = draggedElement.getBoundingClientRect();
 
-  const scrollX = window.scrollX || window.pageXOffset;
-  const scrollY = window.scrollY || window.pageYOffset;
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
 
-  draggedElement.style.left =
-    scrollX + dropRect.left + dropRect.width / 2 - dragRect.width / 2 + 'px';
-  draggedElement.style.top =
-    scrollY + dropRect.top + dropRect.height / 2 - dragRect.height / 2 + 'px';
-}
+    draggedElement.style.left =
+      scrollX + dropRect.left + dropRect.width / 2 - dragRect.width / 2 + 'px';
+    draggedElement.style.top =
+      scrollY + dropRect.top + dropRect.height / 2 - dragRect.height / 2 + 'px';
+  }
 }
 
 // Export default for ES modules
