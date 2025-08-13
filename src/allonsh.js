@@ -14,8 +14,10 @@ class Allonsh {
     this._applyDefaultCSS =
       options.applyDefaultCSS !== undefined ? options.applyDefaultCSS : true;
 
-    this._snapToCenterEnabled =
-      options.snapToCenter !== undefined ? options.snapToCenter : true;
+    this._enableSnapping =
+      options.enableSnapping !== undefined ? options.enableSnapping : true;
+
+    this._snapMode = options.snapMode || 'center';
 
     this._accessibilityEnabled =
       options.accessibility !== undefined ? options.accessibility : false;
@@ -293,9 +295,9 @@ class Allonsh {
         })
       );
 
-      // Snap to center if enabled and in dropzone
-      if (this._snapToCenterEnabled && this._dropzones.has(elementBelow)) {
-        this._applySnapToCenter(this.draggedElement, elementBelow);
+      // Snap based on current snap mode
+      if (this._enableSnapping && this._dropzones.has(elementBelow)) {
+        this._applySnap(this.draggedElement, elementBelow);
       }
     }
 
@@ -333,27 +335,80 @@ class Allonsh {
   }
 
   /**
-   * Enable or disable snap-to-center feature.
+   * Enable or disable snapping behavior.
    * @param {boolean} enable
    */
-  enableSnapToCenter(enable = true) {
-    this._snapToCenterEnabled = enable;
+  enableSnapping(enable = true) {
+    this._enableSnapping = enable;
   }
 
   /**
-   * Moves dragged element to the center of the dropzone.
+   * Set snapping mode.
+   * @param {string} mode - "center", "top-left", "top-right", "bottom-left", "bottom-right", "edge"
    */
-  _applySnapToCenter(draggedElement, dropzone) {
+  setSnapMode(mode) {
+    const validModes = [
+      'center',
+      'top-left',
+      'top-right',
+      'bottom-left',
+      'bottom-right',
+      'edge',
+    ];
+    if (validModes.includes(mode)) {
+      this._snapMode = mode;
+    } else {
+      console.warn(`[Allonsh] Invalid snap mode: ${mode}`);
+    }
+  }
+
+  /**
+   * Moves dragged element based on snap mode.
+   */
+  _applySnap(draggedElement, dropzone) {
     const dropRect = dropzone.getBoundingClientRect();
     const dragRect = draggedElement.getBoundingClientRect();
 
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
 
-    draggedElement.style.left =
-      scrollX + dropRect.left + dropRect.width / 2 - dragRect.width / 2 + 'px';
-    draggedElement.style.top =
-      scrollY + dropRect.top + dropRect.height / 2 - dragRect.height / 2 + 'px';
+    let left, top;
+
+    switch (this._snapMode) {
+      case 'top-left':
+        left = dropRect.left;
+        top = dropRect.top;
+        break;
+      case 'top-right':
+        left = dropRect.right - dragRect.width;
+        top = dropRect.top;
+        break;
+      case 'bottom-left':
+        left = dropRect.left;
+        top = dropRect.bottom - dragRect.height;
+        break;
+      case 'bottom-right':
+        left = dropRect.right - dragRect.width;
+        top = dropRect.bottom - dragRect.height;
+        break;
+      case 'edge':
+        const dx = dragRect.left - dropRect.left;
+        const dy = dragRect.top - dropRect.top;
+        const midX = dropRect.width / 2;
+        const midY = dropRect.height / 2;
+
+        left = dx < midX ? dropRect.left : dropRect.right - dragRect.width;
+
+        top = dy < midY ? dropRect.top : dropRect.bottom - dragRect.height;
+        break;
+      case 'center':
+      default:
+        left = dropRect.left + dropRect.width / 2 - dragRect.width / 2;
+        top = dropRect.top + dropRect.height / 2 - dragRect.height / 2;
+    }
+
+    draggedElement.style.left = scrollX + left + 'px';
+    draggedElement.style.top = scrollY + top + 'px';
   }
 
   /**
