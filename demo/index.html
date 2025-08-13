@@ -57,21 +57,11 @@
 
       const dropzone = document.getElementById('dropzone');
 
-      dropzone.addEventListener('allonsh-dragover', () => {
-        dropzone.classList.add('dragover');
-      });
+      const dragManager = new Allonsh('.draggable');
+      dragManager.enableSnapToCenter(true);
 
-      dropzone.addEventListener('allonsh-drop', (e) => {
-        dropzone.classList.remove('dragover');
-        alert('Dropped ' + e.detail.draggedEl.textContent + ' into dropzone!');
-        // Example: snap dragged element into dropzone center
-        const rect = dropzone.getBoundingClientRect();
-        e.detail.draggedEl.style.left = rect.left + rect.width / 2 - 50 + 'px';
-        e.detail.draggedEl.style.top = rect.top + rect.height / 2 - 50 + 'px';
-      });
-
-      document.addEventListener('allonsh-dragstart', () => {
-        dropzone.classList.remove('dragover');
+      dragManager.registerDropzone('#dropzone', (draggedEl, dropzone) => {
+        console.log('Dropped:', draggedEl.textContent);
       });
     </script>
   </body>
