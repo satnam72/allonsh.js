@@ -1,24 +1,133 @@
 // allonsh.js
 class Allonsh {
-  constructor(draggableSelector) {
+  /**
+   * @param {string} draggableSelector - CSS selector for draggable elements
+   * @param {object} options - Optional settings
+   */
+  constructor(draggableSelector, options = {}) {
     this.draggables = document.querySelectorAll(draggableSelector);
     this.draggedElement = null;
     this.offsetX = 0;
     this.offsetY = 0;
     this._snapToCenterEnabled = false;
-    this._dropzones = new Set(); // Track registered dropzones
+    this._dropzones = new Set();
+
+    // internal flag tracking whether CSS has been injected
+    this._cssInjected = false;
+
+    // Internal flag for whether default CSS is applied
+    this._applyDefaultCSS =
+      options.applyDefaultCSS !== undefined ? options.applyDefaultCSS : true;
 
     this._onMouseDown = this._onMouseDown.bind(this);
     this._onMouseMove = this._onMouseMove.bind(this);
     this._onMouseUp = this._onMouseUp.bind(this);
 
     this._initialize();
+
+    // Apply CSS according to initial option
+    this.applyDefaultCSS(this._applyDefaultCSS);
+  }
+
+  /**
+   * Enable or disable default CSS injection and styling.
+   * @param {boolean} value
+   */
+  applyDefaultCSS(value) {
+    const boolVal = Boolean(value);
+    if (this._applyDefaultCSS === boolVal) return;
+
+    this._applyDefaultCSS = boolVal;
+
+    if (this._applyDefaultCSS) {
+      // Inject default CSS if not already done
+      if (!this._cssInjected) {
+        this._injectDefaultCss();
+        this._cssInjected = true;
+      }
+
+      this.draggables.forEach((el) => {
+        if (!el.classList.contains('allonsh-draggable')) {
+          el.classList.add('allonsh-draggable');
+        }
+        Object.assign(el.style, {
+          position: 'absolute',
+          cursor: 'grab',
+          userSelect: 'none',
+        });
+      });
+    } else {
+      // When disabling CSS injection, remove class and warn about missing styles
+      this.draggables.forEach((el) => {
+        el.classList.remove('allonsh-draggable');
+        const style = getComputedStyle(el);
+        // Removed cursor check here
+        const required = {
+          position: 'absolute',
+          userSelect: 'none',
+        };
+        for (const [prop, val] of Object.entries(required)) {
+          if (style.getPropertyValue(prop).trim() !== val) {
+            console.warn(`[Allonsh] "${prop}" should be "${val}".`);
+          }
+        }
+      });
+      console.error(
+        '[Allonsh] Default CSS injection disabled. Please provide required CSS for draggable elements.'
+      );
+    }
+  }
+
+  _injectDefaultCss() {
+    if (document.getElementById('allonsh-default-css')) return;
+
+    const style = document.createElement('style');
+    style.id = 'allonsh-default-css';
+    style.textContent = `
+      .allonsh-draggable {
+        position: absolute !important;
+        cursor: grab !important;
+        user-select: none !important;
+      }
+      .allonsh-draggable:active {
+        cursor: grabbing !important;
+      }
+      .dragover {
+        background-color: #d3f9d8 !important;
+        border-color: #4caf50 !important;
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   _initialize() {
     this.draggables.forEach((element) => {
-      element.style.position = 'absolute';
-      element.style.cursor = 'grab';
+      if (this._applyDefaultCSS) {
+        if (!element.classList.contains('allonsh-draggable')) {
+          element.classList.add('allonsh-draggable');
+        }
+        Object.assign(element.style, {
+          position: 'absolute',
+          cursor: 'grab',
+          userSelect: 'none',
+        });
+      } else {
+        const style = getComputedStyle(element);
+        // Removed cursor check here
+        const required = {
+          position: 'absolute',
+          userSelect: 'none',
+        };
+        for (const [prop, val] of Object.entries(required)) {
+          if (style.getPropertyValue(prop).trim() !== val) {
+            console.warn(`[Allonsh] "${prop}" should be "${val}".`);
+          }
+        }
+        console.error(
+          '[Allonsh] Default CSS injection disabled. Please provide required CSS for draggable elements.'
+        );
+      }
+
       element.addEventListener('mousedown', this._onMouseDown);
     });
   }
@@ -46,71 +155,53 @@ class Allonsh {
   _onMouseMove(event) {
     if (!this.draggedElement) return;
 
-    const draggedEl = this.draggedElement;
-    const dragRect = draggedEl.getBoundingClientRect();
+    const draggedElement = this.draggedElement;
+    const dragRect = draggedElement.getBoundingClientRect();
 
-    // Calculate new desired position relative to viewport
     let newLeft = event.clientX - this.offsetX;
     let newTop = event.clientY - this.offsetY;
 
-    // Viewport dimensions
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // Scroll positions
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
 
-    // Width and height of dragged element
     const elWidth = dragRect.width;
     const elHeight = dragRect.height;
 
-    // Check boundaries and scroll if possible, else clamp
-
-    // Horizontal (left)
     if (newLeft < 0) {
-      if (scrollX > 0) {
-        window.scrollBy(newLeft, 0);
-      }
+      if (scrollX > 0) window.scrollBy(newLeft, 0);
       newLeft = Math.max(newLeft, 0);
     } else if (newLeft + elWidth > vw) {
       const maxScrollX = document.documentElement.scrollWidth - vw;
-      if (scrollX < maxScrollX) {
-        window.scrollBy(newLeft + elWidth - vw, 0);
-      }
+      if (scrollX < maxScrollX) window.scrollBy(newLeft + elWidth - vw, 0);
       newLeft = Math.min(newLeft, vw - elWidth);
     }
 
-    // Vertical (top)
     if (newTop < 0) {
-      if (scrollY > 0) {
-        window.scrollBy(0, newTop);
-      }
+      if (scrollY > 0) window.scrollBy(0, newTop);
       newTop = Math.max(newTop, 0);
     } else if (newTop + elHeight > vh) {
       const maxScrollY = document.documentElement.scrollHeight - vh;
-      if (scrollY < maxScrollY) {
-        window.scrollBy(0, newTop + elHeight - vh);
-      }
+      if (scrollY < maxScrollY) window.scrollBy(0, newTop + elHeight - vh);
       newTop = Math.min(newTop, vh - elHeight);
     }
 
-    // Apply new position relative to document (scroll + viewport offset)
-    draggedEl.style.left = scrollX + newLeft + 'px';
-    draggedEl.style.top = scrollY + newTop + 'px';
+    draggedElement.style.left = scrollX + newLeft + 'px';
+    draggedElement.style.top = scrollY + newTop + 'px';
 
-    // Drag over detection
-    draggedEl.style.pointerEvents = 'none';
+    draggedElement.style.pointerEvents = 'none';
     const elementBelow = document.elementFromPoint(
       event.clientX,
       event.clientY
     );
-    draggedEl.style.pointerEvents = 'auto';
+    draggedElement.style.pointerEvents = 'auto';
 
-    if (elementBelow && elementBelow !== draggedEl) {
+    if (elementBelow && elementBelow !== draggedElement) {
       elementBelow.dispatchEvent(
         new CustomEvent('allonsh-dragover', {
-          detail: { draggedEl, originalEvent: event },
+          detail: { draggedElement, originalEvent: event },
         })
       );
     }
@@ -129,7 +220,7 @@ class Allonsh {
     if (elementBelow && elementBelow !== this.draggedElement) {
       elementBelow.dispatchEvent(
         new CustomEvent('allonsh-drop', {
-          detail: { draggedEl: this.draggedElement, originalEvent: event },
+          detail: { draggedElement: this.draggedElement, originalEvent: event },
         })
       );
 
@@ -147,9 +238,6 @@ class Allonsh {
     document.removeEventListener('mouseup', this._onMouseUp);
   }
 
-  /**
-   * Registers a dropzone and optional drop handler.
-   */
   registerDropzone(selector, onDrop) {
     const dropzone = document.querySelector(selector);
     if (!dropzone) return;
@@ -163,7 +251,7 @@ class Allonsh {
     dropzone.addEventListener('allonsh-drop', (event) => {
       dropzone.classList.remove('dragover');
       if (typeof onDrop === 'function') {
-        onDrop(event.detail.draggedEl, dropzone);
+        onDrop(event.detail.draggedElement, dropzone);
       }
     });
 
@@ -172,17 +260,10 @@ class Allonsh {
     });
   }
 
-  /**
-   * Enables or disables automatic snap-to-center behavior on drop.
-   */
   enableSnapToCenter(enable = true) {
     this._snapToCenterEnabled = enable;
   }
 
-  /**
-   * Applies snap-to-center logic to a dragged element.
-   * @private
-   */
   _applySnapToCenter(draggedElement, dropzone) {
     const dropRect = dropzone.getBoundingClientRect();
     const dragRect = draggedElement.getBoundingClientRect();
@@ -197,5 +278,4 @@ class Allonsh {
   }
 }
 
-// Export default for ES modules
 export default Allonsh;
