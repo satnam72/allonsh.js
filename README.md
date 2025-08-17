@@ -1,6 +1,6 @@
-# allonsh.js
+# Allonsh.js
 
-Lightweight JavaScript library for drag and drop using `elementFromPoint`.
+Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.
 
 ## Features
 
@@ -14,6 +14,8 @@ Lightweight JavaScript library for drag and drop using `elementFromPoint`.
 - Emits custom events (`allonsh-dragstart`, `allonsh-drop`, etc.) for easy integration
 
 ## Usage
+
+Initialize Allonsh by importing the module and providing the required options.
 
 ```js
 import Allonsh from './allonsh.js';
