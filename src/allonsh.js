@@ -22,10 +22,10 @@ class Allonsh {
     this.stackSpacing = stackSpacing;
 
     if (playAreaSelector) {
-      this.playAreaElement = document.querySelector(`#${playAreaSelector}`);
+      this.playAreaElement = document.querySelector(`.${playAreaSelector}`);
       if (!this.playAreaElement) {
         throw new Error(
-          `Allonsh Error: Play area element with ID '${playAreaSelector}' not found.`
+          `Allonsh Error: Play area element with class '${playAreaSelector}' not found.`
         );
       }
     } else {
