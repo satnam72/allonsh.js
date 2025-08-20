@@ -51,6 +51,9 @@ const allonsh = new Allonsh({
 
 ## Demo
 
+You can explore all the features of Allonsh.js through the live demo page:
+[Live Demo](https://satnam72.github.io/allonsh.js/)
+
 Try the demo by running a local server and opening the demo page:
 
 ```bash
@@ -62,6 +65,7 @@ python3 -m http.server 8000
 
 # Open in browser
 http://localhost:8000/demo/index.html
+
 ```
 
 ## Contributing
