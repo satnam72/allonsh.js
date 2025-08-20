@@ -1,3 +1,17 @@
+<p align="center">
+<picture>
+<source
+srcset="resources/logo-light.svg"
+media="(prefers-color-scheme: dark)"
+/>
+<source
+srcset="resources/logo-dark.svg"
+media="(prefers-color-scheme: light)"
+/>
+<img src="resources/logo-dark.svg" alt="Allonsh.js logo"/>
+</picture>
+</p>
+
 # Allonsh.js Demo
 
 Welcome to the demo page of **Allonsh.js**! This page demonstrates how Allonsh.js works in a live environment.
@@ -6,7 +20,7 @@ Welcome to the demo page of **Allonsh.js**! This page demonstrates how Allonsh.j
 
 Allonsh.js is a lightweight and flexible JavaScript library that simplifies drag-and-drop functionality for web applications. It provides a straightforward API for adding draggable elements and drop zones to your website.
 
-## Demo
+## Features
 
 - **Draggable Elements**: Easily make any element on the page draggable with a simple class.
 - **Drop Zones**: Define drop zones where elements can be dropped. Includes stacking behavior if enabled.
