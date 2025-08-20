@@ -1,14 +1,14 @@
 <p align="center">
 <picture>
 <source
-srcset="resources/logo-light.svg"
+srcset="img/logo-light.svg"
 media="(prefers-color-scheme: dark)"
 />
 <source
-srcset="resources/logo-dark.svg"
+srcset="img/logo-dark.svg"
 media="(prefers-color-scheme: light)"
 />
-<img src="resources/logo-dark.svg" alt="Allonsh.js logo"/>
+<img src="img/logo-dark.svg" alt="Allonsh.js logo"/>
 </picture>
 </p>
 
