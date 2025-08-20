@@ -1,6 +1,6 @@
 {
   "name": "allonsh",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Lightweight JavaScript library for drag and drop using `elementFromPoint`.",
   "main": "src/allonsh.js",
   "directories": {
