@@ -7,7 +7,6 @@ Welcome to the demo page of **Allonsh.js**! This page demonstrates how Allonsh.j
 Allonsh.js is a lightweight and flexible JavaScript library that simplifies drag-and-drop functionality for web applications. It provides a straightforward API for adding draggable elements and drop zones to your website.
 
 ## Demo
-## Features
 
 - **Draggable Elements**: Easily make any element on the page draggable with a simple class.
 - **Drop Zones**: Define drop zones where elements can be dropped. Includes stacking behavior if enabled.
@@ -15,7 +14,7 @@ Allonsh.js is a lightweight and flexible JavaScript library that simplifies drag
 - **Configurable Stacking**: Elements within a drop zone can be stacked either horizontally or vertically.
 - **Touch Support**: Works seamlessly on both desktop and mobile devices.
 
-## Demo Preview
+## Demo 
 
 You can interact with the live demo on the page by dragging elements and dropping them in the drop zones.
 
@@ -23,8 +22,7 @@ You can interact with the live demo on the page by dragging elements and droppin
 
 ## License
 
-Allonsh.js is open-source and distributed under the MIT License
-.
+Allonsh.js is open-source and distributed under the MIT License.
 
 ## Contributing
 
