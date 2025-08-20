@@ -1,3 +1,17 @@
+<p align="center">
+<picture>
+<source
+srcset="resources/logo-light.svg"
+media="(prefers-color-scheme: dark)"
+/>
+<source
+srcset="resources/logo-dark.svg"
+media="(prefers-color-scheme: light)"
+/>
+<img src="resources/logo-dark.svg" alt="Allonsh.js logo"/>
+</picture>
+</p>
+
 # Allonsh.js
 
 Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.
