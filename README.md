@@ -2,6 +2,8 @@
 
 Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.
 
+![Version Badge](https://img.shields.io/badge/Current_Version-v0.1.0--beta2-blue.svg)
+
 ## Features
 
 - Minimal, dependency-free drag-and-drop solution
@@ -22,13 +24,14 @@ import Allonsh from './allonsh.js';
 
 // Initialize Allonsh with options
 const allonsh = new Allonsh({
-  draggableSelector: 'allonsh-draggable',   // Required: class for draggable elements
-  dropzoneSelector: 'allonsh-dropzone',     // Optional: class for dropzones
-  playAreaSelector: 'play-area',             // Optional: class for the container area
-  restrictToDropzones: false,                // Optional: restrict dragging to dropzones
-  enableStacking: true,                      // Optional: enable stacking inside dropzones
-  stackDirection: 'horizontal',              // Optional: 'horizontal' or 'vertical'
-  stackSpacing: 8                            // Optional: spacing between stacked items (px)
+  draggableSelector: 'allonsh-draggable', // Required: class for draggable elements
+  dropzoneSelector: 'allonsh-dropzone', // Optional: class for dropzones
+  playAreaSelector: 'play-area', // Optional: class for the container area
+  restrictToDropzones: false, // Optional: restrict dragging to dropzones
+  enableStacking: true, // Optional: enable stacking inside dropzones
+  stackDirection: 'horizontal', // Optional: 'horizontal' or 'vertical'
+  stackSpacing: 8, // Optional: spacing between stacked items (px)
+  useGhostEffect: true, // Optional: enable ghost effect (shows transparent clone while dragging)
 });
 ```
 

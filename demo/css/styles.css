@@ -1,0 +1,435 @@
+:root {
+  --color-bg-light: #f9f9fb;
+  --color-bg-dark: #1c1c1e;
+
+  --color-text-light: #1c1c1c;
+  --color-text-dark: #f0f0f0;
+
+  --color-accent: #4f46e5;
+  --color-accent-soft: #eef2ff;
+
+  --color-border-light: #ccc;
+  --color-border-dark: #444;
+
+  --color-dropzone-bg-hover-light: #e0e7ff;
+  --color-dropzone-bg-hover-dark: #2a2a2a;
+
+  --panel-bg: #ffffff;
+  --panel-border: #ddd;
+
+  /* Current theme tokens */
+  --bg-color: var(--color-bg-light);
+  --text-color: var(--color-text-light);
+  --box-color: var(--color-accent);
+  --dropzone-border: var(--color-border-light);
+  --dropzone-text: var(--color-accent);
+  --dropzone-bg-hover: var(--color-dropzone-bg-hover-light);
+}
+
+body.night {
+  --bg-color: var(--color-bg-dark);
+  --text-color: var(--color-text-dark);
+  --box-color: #60a5fa;
+  --dropzone-border: var(--color-border-dark);
+  --dropzone-text: #d1d5db;
+  --panel-bg: #2c2c2c;
+  --panel-border: #444;
+  --dropzone-bg-hover: var(--color-dropzone-bg-hover-dark);
+}
+
+/* Base styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  padding: 1rem;
+}
+
+/* Header */
+.demo-header {
+  position: fixed;
+  z-index: 10;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  left: 1.5rem;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.demo-header__branding {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.demo-header__logo g {
+  fill: var(--text-color);
+  cursor: pointer;
+}
+
+.demo-header__title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.demo-header__github path {
+  fill: var(--text-color);
+}
+/* Main Title */
+.spaced-top {
+  margin-top: 7rem;
+}
+
+.demo-section__title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 1.7rem auto 1.5rem;
+}
+
+/* Playground Container */
+.demo-section__playground {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  max-width: 876px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+body.night .demo-section__playground {
+  background-color: #2b2b2e;
+}
+
+/* Draggable Items */
+.demo-playground__draggables {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  max-width: 780px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.demo-playground__draggables.dropzone {
+  min-height: auto;
+}
+
+.draggable {
+  width: 60px;
+  height: 60px;
+  background-color: var(--box-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  cursor: grab;
+  font-weight: 500;
+}
+
+/* Dropzones */
+.demo-playground__dropzones {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.dropzone {
+  flex: 1;
+  min-height: 150px;
+  background-color: transparent;
+  color: var(--dropzone-text);
+  font-weight: bold;
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.dashed {
+  border: 2px dashed var(--dropzone-border);
+  border-radius: 0.5rem;
+}
+
+.dropzone.dragover {
+  background-color: var(--dropzone-bg-hover);
+  border-color: var(--box-color);
+}
+
+/* Reset Button */
+.demo-playground__reset {
+  text-align: center;
+}
+
+/* Footer */
+.demo-footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem 0;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* Theme Toggle (if applicable) */
+.toggle-button {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--box-color);
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-button .icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Main Layout: Playground + Controls Side-by-side */
+.demo-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+}
+
+.demo-playgrounds {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.demo-freemode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  background-color: var(--panel-bg);
+  opacity: 0.8;
+  background-image:
+    linear-gradient(135deg, var(--panel-border) 25%, transparent 25%),
+    linear-gradient(225deg, var(--panel-border) 25%, transparent 25%),
+    linear-gradient(45deg, var(--panel-border) 25%, transparent 25%),
+    linear-gradient(315deg, var(--panel-border) 25%, var(--panel-bg) 25%);
+  background-position:
+    10px 0,
+    10px 0,
+    0 0,
+    0 0;
+  background-size: 20px 20px;
+  background-repeat: repeat;
+}
+
+.freemode-draggable {
+  width: 100px;
+  height: 100px;
+  display: flex;
+}
+
+.freemode-title {
+  position: absolute;
+  top: 1.5rem;
+  background-color: var(--bg-color);
+  padding: 1rem;
+  left: 1.5rem;
+  z-index: 5;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 2px solid var(--panel-border);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+/* Control Panel beside Playground */
+.demo-control-panel {
+  background-color: var(--panel-bg);
+  padding: 1rem;
+  border: 1px solid var(--panel-border);
+  width: 260px;
+  max-height: 90vh;
+  flex-shrink: 0;
+  overflow-y: auto;
+  position: relative;
+  transition: transform 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.demo-control-panel.open {
+  transform: translateX(0);
+}
+
+.demo-control-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.demo-control-panel__title {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.demo-control-panel__option {
+  display: block;
+  margin: 0.1rem 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.demo-control-panel__option input[type='checkbox'] {
+  transform: scale(1.2);
+  margin-right: 0.5rem;
+  accent-color: var(--box-color);
+}
+
+.demo-control-panel__option input[type='range'] {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  accent-color: var(--box-color);
+}
+
+.toggle-panel-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent);
+  color: var(--panel-bg);
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 9;
+}
+
+.toggle-panel-btn.open {
+  border-radius: 50%;
+  position: absolute;
+  color: white;
+  top: 1rem;
+  right: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.toggle-panel-btn.close {
+  background-color: transparent;
+  fill: var(--color-bg-dark);
+  padding: 0;
+}
+/* stack buttons */
+
+.stack-btn {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--box-color);
+  background-color: white;
+  color: var(--box-color);
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.stack-btn:hover {
+  background-color: var(--dropzone-bg-hover);
+}
+
+.stack-btn.selected {
+  background-color: var(--box-color);
+  color: white;
+}
+
+.stack-btn.selected:hover {
+  background-color: var(--box-color);
+}
+
+.stack-btn.freemode {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.demo-playground__draggables:empty::before {
+  content: 'Add new draggable!' !important;
+  padding: 1.1rem 0.55rem;
+}
+
+.dropzone:empty::before {
+  content: 'Drop here';
+}
+
+.theme-toggle-btn {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 1.2rem;
+  right: 1.2rem;
+  padding: 0.7rem;
+  background-color: var(--box-color);
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-btn:hover {
+  background-color: #5876f0;
+}
+
+@media (max-width: 768px) {
+  .demo-control-panel {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 9;
+    transform: translateX(-120%);
+    transition: transform 0.3s ease;
+  }
+  .toggle-panel-btn {
+    display: flex;
+  }
+  .demo-playground__dropzones {
+    flex-direction: column;
+  }
+}
