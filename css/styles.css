@@ -48,9 +48,7 @@ body {
   font-family: system-ui, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   padding: 1rem;
 }
 
@@ -88,16 +86,24 @@ body {
 
 .demo-header__title {
   font-size: 1.4rem;
+  position: relative;
   font-weight: 600;
 }
 
-.demo-allonsh__currentVersion
-{
-background-color: var(--text-color);
-color: var(--bg-color);
-padding: 0.2rem 0.4rem;
-border-radius: 0.2rem;
-font-size: 0.7rem;
+.demo-header__demoText {
+  position: relative;
+  top: -1rem;
+  right: 0;
+  font-size: 0.9rem;
+  color: var(--box-color);
+}
+
+.demo-allonsh__currentVersion {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  font-size: 0.6rem;
 }
 
 .demo-header__github path {
@@ -178,9 +184,7 @@ body.night .demo-section__playground {
   padding: 1rem;
   align-items: center;
   justify-content: center;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .dashed {
@@ -253,16 +257,15 @@ body.night .demo-section__playground {
   height: 500px;
   background-color: var(--panel-bg);
   opacity: 0.8;
-  background-image:
-    linear-gradient(135deg, var(--panel-border) 25%, transparent 25%),
+  background-image: linear-gradient(
+      135deg,
+      var(--panel-border) 25%,
+      transparent 25%
+    ),
     linear-gradient(225deg, var(--panel-border) 25%, transparent 25%),
     linear-gradient(45deg, var(--panel-border) 25%, transparent 25%),
     linear-gradient(315deg, var(--panel-border) 25%, var(--panel-bg) 25%);
-  background-position:
-    10px 0,
-    10px 0,
-    0 0,
-    0 0;
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
   background-size: 20px 20px;
   background-repeat: repeat;
 }
@@ -307,8 +310,9 @@ body.night .demo-section__playground {
 
 .demo-control-panel__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
+  padding: 0.5rem 0 1rem;
 }
 
 .demo-control-panel__title {
@@ -317,7 +321,6 @@ body.night .demo-section__playground {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .demo-control-panel__option {
@@ -326,13 +329,13 @@ body.night .demo-section__playground {
   font-size: 0.95rem;
 }
 
-.demo-control-panel__option input[type='checkbox'] {
+.demo-control-panel__option input[type="checkbox"] {
   transform: scale(1.2);
   margin-right: 0.5rem;
   accent-color: var(--box-color);
 }
 
-.demo-control-panel__option input[type='range'] {
+.demo-control-panel__option input[type="range"] {
   width: 100%;
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
@@ -343,25 +346,25 @@ body.night .demo-section__playground {
   display: none;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-accent);
-  color: var(--panel-bg);
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-  z-index: 9;
+  z-index: 5;
 }
 
 .toggle-panel-btn.open {
   border-radius: 50%;
   position: absolute;
   color: white;
+  background-color: var(--box-color);
   top: 1rem;
   right: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
 .toggle-panel-btn.close {
   background-color: transparent;
-  fill: var(--color-bg-dark);
+  fill: var(--text-color);
   padding: 0;
 }
 /* stack buttons */
@@ -398,12 +401,12 @@ body.night .demo-section__playground {
 }
 
 .demo-playground__draggables:empty::before {
-  content: 'Add new draggable!' !important;
+  content: "Add new draggable!" !important;
   padding: 1.1rem 0.55rem;
 }
 
 .dropzone:empty::before {
-  content: 'Drop here';
+  content: "Drop here";
 }
 
 .theme-toggle-btn {
@@ -419,7 +422,7 @@ body.night .demo-section__playground {
   border-radius: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
-  z-index: 5;
+  z-index: 9;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -428,6 +431,11 @@ body.night .demo-section__playground {
 }
 
 @media (max-width: 768px) {
+  .demo-header {
+  left: 1rem;
+  right: 1rem;
+  }
+
   .demo-control-panel {
     position: fixed;
     bottom: 1rem;
