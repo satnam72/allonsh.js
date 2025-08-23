@@ -33,6 +33,9 @@
     "docs"
   ],
   "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
