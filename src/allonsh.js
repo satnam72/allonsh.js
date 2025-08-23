@@ -65,7 +65,6 @@ class Allonsh {
     this.ghostElement = null;
     this.originalParent = null;
     this.originalDropzone = null;
-    this._dragStartPos = { left: 0, top: 0 };
 
     this._boundMouseMoveHandler = this._onMouseMove.bind(this);
     this._boundMouseUpHandler = this._onMouseUp.bind(this);
@@ -111,22 +110,19 @@ class Allonsh {
         );
       }
     }
+    this._unbindEventListeners();
 
-    if (draggableSelector) {
-      this.draggableElements = this.playAreaElement.querySelectorAll(
-        `.${draggableSelector}`
-      );
+    this.draggableElements = this.playAreaElement.querySelectorAll(
+      `.${draggableSelector}`
+    );
 
-      this.draggableElements.forEach((element) => {
-        element.style.cursor = 'grab';
-        element.removeEventListener('mousedown', this._boundMouseDown);
-        element.removeEventListener('touchstart', this._boundTouchStart);
-        element.addEventListener('mousedown', this._boundMouseDown);
-        element.addEventListener('touchstart', this._boundTouchStart, {
-          passive: false,
-        });
+    this.draggableElements.forEach((element) => {
+      element.style.cursor = 'grab';
+      element.addEventListener('mousedown', this._boundMouseDown);
+      element.addEventListener('touchstart', this._boundTouchStart, {
+        passive: false,
       });
-    }
+    });
 
     if (dropzoneSelector) {
       this.dropzoneElements = this.playAreaElement.querySelectorAll(
@@ -190,6 +186,15 @@ class Allonsh {
         }
       });
     }
+  }
+
+  _unbindEventListeners() {
+    if (!this.draggableElements) return;
+
+    this.draggableElements.forEach((element) => {
+      element.removeEventListener('mousedown', this._boundMouseDown);
+      element.removeEventListener('touchstart', this._boundTouchStart);
+    });
   }
 
   _applyStackingStyles(dropzone) {
@@ -321,16 +326,7 @@ class Allonsh {
 
         this.ghostElement.style.left = `${rect.left - playAreaRect.left}px`;
         this.ghostElement.style.top = `${rect.top - playAreaRect.top}px`;
-
-        this._dragStartPos = {
-          left: rect.left,
-          top: rect.top,
-        };
       } else {
-        this._dragStartPos = {
-          left: rect.left - playAreaRect.left,
-          top: rect.top - playAreaRect.top,
-        };
         this.ghostElement = null;
       }
 
@@ -624,8 +620,8 @@ class Allonsh {
 
   _resetPositionToRelative(element) {
     try {
-      element.style.left = 0;
-      element.style.top = 0;
+      element.style.left = '';
+      element.style.top = '';
       element.style.position = 'relative';
     } catch (err) {
       console.error('Allonsh Error resetting element position:', err);
