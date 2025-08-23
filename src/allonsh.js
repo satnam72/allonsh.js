@@ -1,443 +1,698 @@
 class Allonsh {
-  /**
-   * @param {string} draggableSelector - CSS selector for draggable elements
-   * @param {object} options - Optional settings
-   */
-  constructor(draggableSelector, options = {}) {
-    this._draggableSelector = draggableSelector;
-    this.draggables = document.querySelectorAll(draggableSelector);
-    this.draggedElement = null;
-    this.offsetX = 0;
-    this.offsetY = 0;
+  constructor(options = {}) {
+    const {
+      draggableSelector,
+      dropzoneSelector = null,
+      playAreaSelector = null,
+      restrictToDropzones = false,
+      enableStacking = false,
+      stackDirection = 'horizontal',
+      stackSpacing = 5,
+      useGhostEffect = false,
+    } = options;
 
-    // Configurable options with sensible defaults
-    this._applyDefaultCSS =
-      options.applyDefaultCSS !== undefined ? options.applyDefaultCSS : true;
-
-    this._enableSnapping =
-      options.enableSnapping !== undefined ? options.enableSnapping : true;
-
-    this._snapMode = options.snapMode || 'center';
-
-    this._accessibilityEnabled =
-      options.accessibility !== undefined ? options.accessibility : false;
-
-    this._zIndex = options.zIndex || 1000;
-
-    this._dropzones = new Set();
-    this._cssInjected = false;
-
-    // Bind methods
-    this._onMouseDown = this._onMouseDown.bind(this);
-    this._onMouseMove = this._onMouseMove.bind(this);
-    this._onMouseUp = this._onMouseUp.bind(this);
-    this._onTouchStart = this._onTouchStart.bind(this);
-    this._onTouchMove = this._onTouchMove.bind(this);
-    this._onTouchEnd = this._onTouchEnd.bind(this);
-    this._onKeyDown = this._onKeyDown.bind(this);
-
-    this._initialize();
-
-    this.applyDefaultCSS(this._applyDefaultCSS);
-  }
-
-  /**
-   * Enable or disable default CSS injection and styling.
-   * @param {boolean} value
-   */
-  applyDefaultCSS(value) {
-    const boolVal = Boolean(value);
-    if (this._applyDefaultCSS === boolVal) return;
-
-    this._applyDefaultCSS = boolVal;
-
-    if (this._applyDefaultCSS && !this._cssInjected) {
-      this._injectDefaultCss();
-      this._cssInjected = true;
+    if (!draggableSelector) {
+      throw new Error(
+        "Allonsh Error: 'draggableSelector' is required in options."
+      );
     }
 
-    this.draggables.forEach((el) => {
-      if (this._applyDefaultCSS) {
-        el.classList.add('allonsh-draggable');
-        Object.assign(el.style, {
-          position: 'absolute',
-          cursor: 'grab',
-          userSelect: 'none',
-        });
-      } else {
-        el.classList.remove('allonsh-draggable');
+    this.restrictToDropzones = restrictToDropzones;
+    this.enableStacking = enableStacking;
+    this.stackDirection = stackDirection;
+    this.stackSpacing = stackSpacing;
+    this.useGhostEffect = useGhostEffect;
+
+    if (playAreaSelector) {
+      this.playAreaElement = document.querySelector(`.${playAreaSelector}`);
+      if (!this.playAreaElement) {
+        throw new Error(
+          `Allonsh Error: Play area element with class '${playAreaSelector}' not found.`
+        );
+      }
+    } else {
+      this.playAreaElement = document.body;
+    }
+
+    this.draggableElements = this.playAreaElement.querySelectorAll(
+      `.${draggableSelector}`
+    );
+    if (this.draggableElements.length === 0) {
+      console.warn(
+        `Allonsh Warning: No draggable elements found with selector '.${draggableSelector}'.`
+      );
+    }
+
+    if (dropzoneSelector) {
+      this.dropzoneElements = this.playAreaElement.querySelectorAll(
+        `.${dropzoneSelector}`
+      );
+      if (this.dropzoneElements.length === 0) {
         console.warn(
-          '[Allonsh] Default CSS injection disabled. Please provide required CSS for draggable elements.'
+          `Allonsh Warning: No dropzone elements found with selector '.${dropzoneSelector}'.`
+        );
+      }
+    } else {
+      this.dropzoneElements = [];
+    }
+
+    this._dropzoneSet = new Set(this.dropzoneElements);
+
+    this.currentDraggedElement = null;
+    this.dragOffsetX = 0;
+    this.dragOffsetY = 0;
+
+    this.ghostElement = null;
+    this.originalParent = null;
+    this.originalDropzone = null;
+
+    this._boundMouseMoveHandler = this._onMouseMove.bind(this);
+    this._boundMouseUpHandler = this._onMouseUp.bind(this);
+    this._boundTouchMoveHandler = this._onTouchMove.bind(this);
+    this._boundTouchEndHandler = this._onTouchEnd.bind(this);
+    this._boundMouseDown = this._onMouseDown.bind(this);
+    this._boundTouchStart = this._onTouchStart.bind(this);
+
+    try {
+      this._initialize();
+    } catch (error) {
+      console.error('Allonsh Initialization Error:', error);
+    }
+  }
+
+  update(newOptions = {}) {
+    const {
+      draggableSelector,
+      dropzoneSelector,
+      playAreaSelector,
+      restrictToDropzones,
+      enableStacking,
+      stackDirection,
+      stackSpacing,
+      useGhostEffect,
+    } = newOptions;
+
+    if (restrictToDropzones !== undefined)
+      this.restrictToDropzones = restrictToDropzones;
+    if (enableStacking !== undefined) this.enableStacking = enableStacking;
+    if (stackDirection !== undefined) this.stackDirection = stackDirection;
+    if (stackSpacing !== undefined) this.stackSpacing = stackSpacing;
+    if (useGhostEffect !== undefined) this.useGhostEffect = useGhostEffect;
+
+    if (playAreaSelector) {
+      const newPlayArea = document.querySelector(`.${playAreaSelector}`);
+      if (newPlayArea) {
+        this.playAreaElement = newPlayArea;
+        this.playAreaElement.style.position = 'relative';
+      } else {
+        console.warn(
+          `Allonsh Warning: Play area element with class '${playAreaSelector}' not found.`
+        );
+      }
+    }
+    this._unbindEventListeners();
+
+    this.draggableElements = this.playAreaElement.querySelectorAll(
+      `.${draggableSelector}`
+    );
+
+    this.draggableElements.forEach((element) => {
+      element.style.cursor = 'grab';
+      element.addEventListener('mousedown', this._boundMouseDown);
+      element.addEventListener('touchstart', this._boundTouchStart, {
+        passive: false,
+      });
+    });
+
+    if (dropzoneSelector) {
+      this.dropzoneElements = this.playAreaElement.querySelectorAll(
+        `.${dropzoneSelector}`
+      );
+      this._dropzoneSet = new Set(this.dropzoneElements);
+    }
+
+    if (this.enableStacking) {
+      if (this.dropzoneElements) {
+        this.dropzoneElements.forEach((dropzone) => {
+          this._applyStackingStyles(dropzone);
+        });
+      }
+    } else {
+      if (this.dropzoneElements) {
+        this.dropzoneElements.forEach((dropzone) => {
+          this._removeStackingStyles(dropzone);
+        });
+      }
+    }
+  }
+
+  _initialize() {
+    if (!this.playAreaElement) {
+      throw new Error(
+        'Allonsh Initialization Error: Play area element is not defined.'
+      );
+    }
+    this.playAreaElement.style.position = 'relative';
+
+    if (!this.draggableElements || this.draggableElements.length === 0) {
+      console.warn('Allonsh Warning: No draggable elements to initialize.');
+      return;
+    }
+
+    this.draggableElements.forEach((element) => {
+      try {
+        element.style.cursor = 'grab';
+        element.addEventListener('mousedown', this._onMouseDown.bind(this));
+        element.addEventListener('touchstart', this._onTouchStart.bind(this), {
+          passive: false,
+        });
+      } catch (err) {
+        console.error(
+          'Allonsh Error attaching event listeners to draggable element:',
+          err
         );
       }
     });
-  }
 
-  /**
-   * Injects default CSS into the page if needed.
-   */
-  _injectDefaultCss() {
-    if (document.getElementById('allonsh-default-css')) return;
-
-    const style = document.createElement('style');
-    style.id = 'allonsh-default-css';
-    style.textContent = `
-      .allonsh-draggable {
-        position: absolute !important;
-        cursor: grab !important;
-        user-select: none !important;
-      }
-      .allonsh-draggable:active {
-        cursor: grabbing !important;
-      }
-      .dragover {
-        background-color: #d3f9d8 !important;
-        border-color: #4caf50 !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  /**
-   * Initializes draggable elements with required event listeners and styles.
-   */
-  _initialize() {
-    this.draggables.forEach((element) => {
-      // Apply default CSS if enabled
-      if (this._applyDefaultCSS) {
-        if (!element.classList.contains('allonsh-draggable')) {
-          element.classList.add('allonsh-draggable');
+    if (this.dropzoneElements) {
+      this.dropzoneElements.forEach((dropzone) => {
+        try {
+          dropzone.classList.add('allonsh-dropzone');
+          if (this.enableStacking) {
+            this._applyStackingStyles(dropzone);
+          }
+        } catch (err) {
+          console.error('Allonsh Error initializing dropzone element:', err);
         }
-        Object.assign(element.style, {
-          position: 'absolute',
-          cursor: 'grab',
-          userSelect: 'none',
-        });
-      }
+      });
+    }
+  }
 
-      // Accessibility features (optional)
-      if (this._accessibilityEnabled) {
-        element.setAttribute('tabindex', '0');
-        element.setAttribute('role', 'button');
-        element.addEventListener('keydown', this._onKeyDown);
-      }
+  _unbindEventListeners() {
+    if (!this.draggableElements) return;
 
-      // Event listeners
-      element.addEventListener('mousedown', this._onMouseDown);
-      element.addEventListener('touchstart', this._onTouchStart, {
+    this.draggableElements.forEach((element) => {
+      element.removeEventListener('mousedown', this._boundMouseDown);
+      element.removeEventListener('touchstart', this._boundTouchStart);
+    });
+  }
+
+  _applyStackingStyles(dropzone) {
+    try {
+      dropzone.style.display = 'flex';
+      dropzone.style.flexDirection =
+        this.stackDirection === 'vertical' ? 'column' : 'row';
+      dropzone.style.gap = `${this.stackSpacing}px`;
+      dropzone.style.flexWrap = 'wrap';
+    } catch (err) {
+      console.error('Allonsh Error applying stacking styles:', err);
+    }
+  }
+
+  _removeStackingStyles(dropzone) {
+    try {
+      dropzone.style.display = '';
+      dropzone.style.flexDirection = '';
+      dropzone.style.gap = '';
+      dropzone.style.flexWrap = '';
+    } catch (err) {
+      console.error('Allonsh Error removing stacking styles:', err);
+    }
+  }
+
+  _onMouseDown(event) {
+    try {
+      this._onPointerDown(event.clientX, event.clientY, event);
+      document.addEventListener('mousemove', this._boundMouseMoveHandler);
+      document.addEventListener('mouseup', this._boundMouseUpHandler);
+    } catch (err) {
+      console.error('Allonsh Error during mousedown event:', err);
+    }
+  }
+
+  _onTouchStart(event) {
+    try {
+      event.preventDefault();
+      const touchPoint = event.touches[0];
+      this._onPointerDown(touchPoint.clientX, touchPoint.clientY, event);
+      document.addEventListener('touchmove', this._boundTouchMoveHandler, {
         passive: false,
       });
-      element.addEventListener('keydown', this._onKeyDown);
-    });
+      document.addEventListener('touchend', this._boundTouchEndHandler);
+    } catch (err) {
+      console.error('Allonsh Error during touchstart event:', err);
+    }
   }
 
-  /**
-   * Re-scan DOM and apply draggable behavior to new elements.
-   */
-  refresh() {
-    this.draggables = document.querySelectorAll(this._draggableSelector);
-    this._initialize();
+  _onPointerDown(clientX, clientY, event) {
+    this._startDrag(event, clientX, clientY);
   }
 
-  /**
-   * Clean up all listeners (for reuse or memory safety).
-   */
-  destroy() {
-    this.draggables.forEach((el) => {
-      el.removeEventListener('mousedown', this._onMouseDown);
-      el.removeEventListener('touchstart', this._onTouchStart);
-      if (this._accessibilityEnabled) {
-        el.removeEventListener('keydown', this._onKeyDown);
-      }
-    });
-
-    document.removeEventListener('mousemove', this._onMouseMove);
-    document.removeEventListener('mouseup', this._onMouseUp);
-    document.removeEventListener('touchmove', this._onTouchMove);
-    document.removeEventListener('touchend', this._onTouchEnd);
-  }
-
-  /**
-   * Mouse down event to initiate dragging.
-   */
-  _onMouseDown(event) {
-    this._startDrag(event, event.clientX, event.clientY);
-    document.addEventListener('mousemove', this._onMouseMove);
-    document.addEventListener('mouseup', this._onMouseUp);
-  }
-
-  /**
-   * Touch start event (mobile support).
-   */
-  _onTouchStart(event) {
-    event.preventDefault();
-    const touch = event.touches[0];
-    this._startDrag(event, touch.clientX, touch.clientY);
-    document.addEventListener('touchmove', this._onTouchMove, {
-      passive: false,
-    });
-    document.addEventListener('touchend', this._onTouchEnd);
-  }
-
-  /**
-   * Shared drag start logic (mouse + touch).
-   */
-  _startDrag(event, clientX, clientY) {
-    this.draggedElement = event.target;
-    const rect = this.draggedElement.getBoundingClientRect();
-
-    this.offsetX = clientX - rect.left;
-    this.offsetY = clientY - rect.top;
-
-    this.draggedElement.style.cursor = 'grabbing';
-    this.draggedElement.style.zIndex = this._zIndex;
-
-    this.draggedElement.dispatchEvent(
-      new CustomEvent('allonsh-dragstart', {
-        detail: { originalEvent: event },
-      })
-    );
-  }
-
-  /**
-   * Mouse move event to perform dragging.
-   */
   _onMouseMove(event) {
-    this._handleDragMove(event.clientX, event.clientY, event);
+    try {
+      this._updateDragPosition(event.clientX, event.clientY);
+    } catch (err) {
+      console.error('Allonsh Error during mousemove event:', err);
+    }
   }
 
-  /**
-   * Touch move event for dragging on mobile.
-   */
   _onTouchMove(event) {
-    event.preventDefault();
-    const touch = event.touches[0];
-    this._handleDragMove(touch.clientX, touch.clientY, event);
-  }
-
-  /**
-   * Shared drag movement logic.
-   */
-  _handleDragMove(clientX, clientY, event) {
-    if (!this.draggedElement) return;
-
-    const draggedElement = this.draggedElement;
-    const dragRect = draggedElement.getBoundingClientRect();
-
-    let newLeft = clientX - this.offsetX;
-    let newTop = clientY - this.offsetY;
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    const elWidth = dragRect.width;
-    const elHeight = dragRect.height;
-
-    // Prevent going outside viewport
-    newLeft = Math.max(0, Math.min(newLeft, vw - elWidth));
-    newTop = Math.max(0, Math.min(newTop, vh - elHeight));
-
-    draggedElement.style.left = scrollX + newLeft + 'px';
-    draggedElement.style.top = scrollY + newTop + 'px';
-
-    // Temporarily hide element to detect drop target
-    draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(clientX, clientY);
-    draggedElement.style.pointerEvents = 'auto';
-
-    if (elementBelow && elementBelow !== draggedElement) {
-      elementBelow.dispatchEvent(
-        new CustomEvent('allonsh-dragover', {
-          detail: { draggedElement, originalEvent: event },
-        })
-      );
+    try {
+      event.preventDefault();
+      const touchPoint = event.touches[0];
+      this._updateDragPosition(touchPoint.clientX, touchPoint.clientY);
+    } catch (err) {
+      console.error('Allonsh Error during touchmove event:', err);
     }
   }
 
-  /**
-   * Mouse up to drop element.
-   */
   _onMouseUp(event) {
-    this._endDrag(event.clientX, event.clientY, event);
-    document.removeEventListener('mousemove', this._onMouseMove);
-    document.removeEventListener('mouseup', this._onMouseUp);
+    try {
+      this._onPointerUp(event.clientX, event.clientY, event);
+      document.removeEventListener('mousemove', this._boundMouseMoveHandler);
+      document.removeEventListener('mouseup', this._boundMouseUpHandler);
+    } catch (err) {
+      console.error('Allonsh Error during mouseup event:', err);
+    }
   }
 
-  /**
-   * Touch end to drop element (mobile).
-   */
   _onTouchEnd(event) {
-    const touch = event.changedTouches[0];
-    this._endDrag(touch.clientX, touch.clientY, event);
-    document.removeEventListener('touchmove', this._onTouchMove);
-    document.removeEventListener('touchend', this._onTouchEnd);
+    try {
+      const touchPoint = event.changedTouches[0];
+      this._onPointerUp(touchPoint.clientX, touchPoint.clientY, event);
+      document.removeEventListener('touchmove', this._boundTouchMoveHandler);
+      document.removeEventListener('touchend', this._boundTouchEndHandler);
+    } catch (err) {
+      console.error('Allonsh Error during touchend event:', err);
+    }
   }
 
-  /**
-   * Shared drop logic (mouse + touch).
-   */
-  _endDrag(clientX, clientY, event) {
-    if (!this.draggedElement) return;
+  _onPointerUp(clientX, clientY, event) {
+    this.currentDraggedElement.style.opacity = '1';
+    this._handleDrop(clientX, clientY, event);
+  }
 
-    this.draggedElement.style.pointerEvents = 'none';
-    const elementBelow = document.elementFromPoint(clientX, clientY);
-    this.draggedElement.style.pointerEvents = 'auto';
+  _startDrag(event, clientX, clientY) {
+    try {
+      this.currentDraggedElement = event.currentTarget;
+      this.currentDraggedElement.style.cursor = 'grabbing';
 
-    if (elementBelow && elementBelow !== this.draggedElement) {
-      elementBelow.dispatchEvent(
-        new CustomEvent('allonsh-drop', {
-          detail: {
-            draggedElement: this.draggedElement,
-            originalEvent: event,
-          },
+      this.originalParent = this.currentDraggedElement.parentElement;
+      this.originalDropzone = this._findClosestDropzone(
+        this.currentDraggedElement
+      );
+
+      if (!this.currentDraggedElement) {
+        throw new Error('Dragged element is null or undefined.');
+      }
+
+      const playAreaRect = this.playAreaElement.getBoundingClientRect();
+      const rect = this.currentDraggedElement.getBoundingClientRect();
+
+      if (this.originalParent !== this.playAreaElement && this.useGhostEffect) {
+        if (this.ghostElement && this.ghostElement.parentElement) {
+          this.ghostElement.parentElement.removeChild(this.ghostElement);
+          this.ghostElement = null;
+        }
+
+        this.ghostElement = this.currentDraggedElement.cloneNode(true);
+        this.ghostElement.style.pointerEvents = 'none';
+        this.ghostElement.style.position = 'absolute';
+
+        this.ghostElement.style.zIndex = '999';
+
+        this.currentDraggedElement.style.opacity = '0.3';
+        this.playAreaElement.appendChild(this.ghostElement);
+
+        this.ghostElement.style.left = `${rect.left - playAreaRect.left}px`;
+        this.ghostElement.style.top = `${rect.top - playAreaRect.top}px`;
+      } else {
+        this.ghostElement = null;
+      }
+
+      this.dragOffsetX = clientX - rect.left;
+      this.dragOffsetY = clientY - rect.top;
+
+      this.currentDraggedElement.style.cursor = 'grabbing';
+      this.currentDraggedElement.style.zIndex = 1000;
+
+      this.currentDraggedElement.dispatchEvent(
+        new CustomEvent('allonsh-dragstart', {
+          detail: { originalEvent: event },
         })
       );
 
-      // Snap based on current snap mode
-      if (this._enableSnapping && this._dropzones.has(elementBelow)) {
-        this._applySnap(this.draggedElement, elementBelow);
+      this._toggleDropzoneHighlight(true);
+    } catch (err) {
+      console.error('Allonsh Error in _startDrag:', err);
+    }
+  }
+
+  _handleElementDrag(element, isGhost = false) {
+    try {
+      if (!element) {
+        throw new Error('Element is null or undefined.');
       }
-    }
 
-    this.draggedElement.style.cursor = 'grab';
-    this.draggedElement.style.zIndex = '';
+      const style = element.style;
 
-    this.draggedElement = null;
-  }
-
-  /**
-   * Registers a dropzone element and its onDrop handler.
-   * @param {string} selector
-   * @param {Function} onDrop
-   */
-  registerDropzone(selector, onDrop) {
-    const dropzone = document.querySelector(selector);
-    if (!dropzone) return;
-
-    this._dropzones.add(dropzone);
-
-    dropzone.addEventListener('allonsh-dragover', () => {
-      dropzone.classList.add('dragover');
-    });
-
-    dropzone.addEventListener('allonsh-drop', (event) => {
-      dropzone.classList.remove('dragover');
-      if (typeof onDrop === 'function') {
-        onDrop(event.detail.draggedElement, dropzone);
+      if (isGhost) {
+        style.pointerEvents = 'none';
+        style.position = 'absolute';
+        style.zIndex = '999';
+        style.opacity = '0.3';
+      } else {
+        style.cursor = 'grabbing';
+        style.zIndex = 1000;
       }
-    });
 
-    document.addEventListener('allonsh-dragstart', () => {
-      dropzone.classList.remove('dragover');
-    });
-  }
-
-  /**
-   * Enable or disable snapping behavior.
-   * @param {boolean} enable
-   */
-  enableSnapping(enable = true) {
-    this._enableSnapping = enable;
-  }
-
-  /**
-   * Set snapping mode.
-   * @param {string} mode - "center", "top-left", "top-right", "bottom-left", "bottom-right", "edge"
-   */
-  setSnapMode(mode) {
-    const validModes = [
-      'center',
-      'top-left',
-      'top-right',
-      'bottom-left',
-      'bottom-right',
-      'edge',
-    ];
-    if (validModes.includes(mode)) {
-      this._snapMode = mode;
-    } else {
-      console.warn(`[Allonsh] Invalid snap mode: ${mode}`);
+      if (isGhost && element !== this.ghostElement) {
+        this.ghostElement = element;
+        this.playAreaElement.appendChild(this.ghostElement);
+      }
+    } catch (err) {
+      console.error(
+        `Allonsh Error handling ${isGhost ? 'ghost' : 'dragged'} element:`,
+        err
+      );
     }
   }
 
-  /**
-   * Moves dragged element based on snap mode.
-   */
-  _applySnap(draggedElement, dropzone) {
-    const dropRect = dropzone.getBoundingClientRect();
-    const dragRect = draggedElement.getBoundingClientRect();
-
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    let left, top;
-
-    switch (this._snapMode) {
-      case 'top-left':
-        left = dropRect.left;
-        top = dropRect.top;
-        break;
-      case 'top-right':
-        left = dropRect.right - dragRect.width;
-        top = dropRect.top;
-        break;
-      case 'bottom-left':
-        left = dropRect.left;
-        top = dropRect.bottom - dragRect.height;
-        break;
-      case 'bottom-right':
-        left = dropRect.right - dragRect.width;
-        top = dropRect.bottom - dragRect.height;
-        break;
-      case 'edge':
-        const dx = dragRect.left - dropRect.left;
-        const dy = dragRect.top - dropRect.top;
-        const midX = dropRect.width / 2;
-        const midY = dropRect.height / 2;
-
-        left = dx < midX ? dropRect.left : dropRect.right - dragRect.width;
-
-        top = dy < midY ? dropRect.top : dropRect.bottom - dragRect.height;
-        break;
-      case 'center':
-      default:
-        left = dropRect.left + dropRect.width / 2 - dragRect.width / 2;
-        top = dropRect.top + dropRect.height / 2 - dragRect.height / 2;
-    }
-
-    draggedElement.style.left = scrollX + left + 'px';
-    draggedElement.style.top = scrollY + top + 'px';
-  }
-
-  /**
-   * Arrow key navigation support for accessibility.
-   */
-  _onKeyDown(event) {
-    if (
-      !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
-    )
+  _updateDragPosition(clientX, clientY) {
+    if (!this.currentDraggedElement) {
+      console.warn('Allonsh Warning: No element is currently being dragged.');
       return;
+    }
 
-    const el = event.target;
-    const step = 10;
-    const left = parseInt(el.style.left || 0, 10);
-    const top = parseInt(el.style.top || 0, 10);
+    try {
+      if (this.ghostElement) {
+        const playAreaRect = this.playAreaElement.getBoundingClientRect();
 
-    switch (event.key) {
-      case 'ArrowUp':
-        el.style.top = `${top - step}px`;
-        break;
-      case 'ArrowDown':
-        el.style.top = `${top + step}px`;
-        break;
-      case 'ArrowLeft':
-        el.style.left = `${left - step}px`;
-        break;
-      case 'ArrowRight':
-        el.style.left = `${left + step}px`;
-        break;
+        let newLeft = clientX - playAreaRect.left - this.dragOffsetX;
+        let newTop = clientY - playAreaRect.top - this.dragOffsetY;
+
+        const ghostRect = this.ghostElement.getBoundingClientRect();
+
+        const maxLeft = playAreaRect.width - ghostRect.width;
+        const maxTop = playAreaRect.height - ghostRect.height;
+
+        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+        newTop = Math.max(0, Math.min(newTop, maxTop));
+
+        this.ghostElement.style.left = `${newLeft}px`;
+        this.ghostElement.style.top = `${newTop}px`;
+      } else {
+        this.currentDraggedElement.style.position = 'absolute';
+
+        const playAreaRect = this.playAreaElement.getBoundingClientRect();
+        const draggedRect = this.currentDraggedElement.getBoundingClientRect();
+
+        let newLeft = clientX - playAreaRect.left - this.dragOffsetX;
+        let newTop = clientY - playAreaRect.top - this.dragOffsetY;
+
+        const maxLeft = this.playAreaElement.clientWidth - draggedRect.width;
+        const maxTop = this.playAreaElement.clientHeight - draggedRect.height;
+
+        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+        newTop = Math.max(0, Math.min(newTop, maxTop));
+
+        this.currentDraggedElement.style.left = `${newLeft}px`;
+        this.currentDraggedElement.style.top = `${newTop}px`;
+      }
+    } catch (err) {
+      console.error('Allonsh Error updating drag position:', err);
+    }
+  }
+
+  _handleDrop(clientX, clientY, event) {
+    if (!this.currentDraggedElement) {
+      console.warn(
+        'Allonsh Warning: Drop attempted without a dragged element.'
+      );
+      return;
+    }
+
+    try {
+      const playAreaRect = this.playAreaElement.getBoundingClientRect();
+
+      const clampedX = Math.min(
+        Math.max(clientX, playAreaRect.left + 1),
+        playAreaRect.right - 1
+      );
+      const clampedY = Math.min(
+        Math.max(clientY, playAreaRect.top + 1),
+        playAreaRect.bottom - 1
+      );
+
+      this.currentDraggedElement.style.pointerEvents = 'none';
+      let elementBelow = document.elementFromPoint(clampedX, clampedY);
+      this.currentDraggedElement.style.pointerEvents = 'auto';
+
+      if (!elementBelow) {
+        if (this.restrictToDropzones) {
+          this._returnToOrigin();
+        }
+        this._resetDraggedElementState();
+        return;
+      }
+
+      let dropzoneFound = null;
+      let el = elementBelow;
+
+      while (el && el !== this.playAreaElement) {
+        if (this._dropzoneSet.has(el)) {
+          dropzoneFound = el;
+          break;
+        }
+        el = el.parentElement;
+      }
+
+      if (dropzoneFound) {
+        this.currentDropzone = dropzoneFound;
+
+        if (this.enableStacking) {
+          this._applyStackingStyles(this.currentDropzone);
+        }
+
+        this._resetPositionToRelative(this.currentDraggedElement);
+
+        if (this.ghostElement && this.ghostElement.parentElement) {
+          this.ghostElement.parentElement.removeChild(this.ghostElement);
+          this.ghostElement = null;
+        }
+
+        try {
+          this.currentDropzone.appendChild(this.currentDraggedElement);
+        } catch (e) {
+          console.warn(
+            'Allonsh Warning: Could not append dragged element to dropzone.',
+            e
+          );
+        }
+
+        this.currentDropzone.dispatchEvent(
+          new CustomEvent('allonsh-drop', {
+            detail: {
+              draggedElement: this.currentDraggedElement,
+              originalEvent: event,
+            },
+          })
+        );
+
+        this.currentDropzone.dispatchEvent(
+          new CustomEvent('allonsh-dragenter', {
+            detail: { draggedElement: this.currentDraggedElement },
+          })
+        );
+        this.currentDropzone.dispatchEvent(
+          new CustomEvent('allonsh-dragleave', {
+            detail: { draggedElement: this.currentDraggedElement },
+          })
+        );
+
+        this.currentDropzone.classList.remove('allonsh-highlight');
+        this.currentDropzone = null;
+      } else {
+        if (this.ghostElement && this.ghostElement.parentElement) {
+          try {
+            this.ghostElement.parentElement.removeChild(this.ghostElement);
+            this.ghostElement = null;
+          } catch (e) {
+            console.warn('Allonsh Warning: Failed to remove ghost element.', e);
+          }
+        }
+
+        if (this.restrictToDropzones) {
+          this._returnToOrigin();
+        } else {
+          if (
+            this.currentDraggedElement.parentElement !== this.playAreaElement
+          ) {
+            try {
+              this.playAreaElement.appendChild(this.currentDraggedElement);
+
+              const offsetX = clampedX - playAreaRect.left - this.dragOffsetX;
+              const offsetY = clampedY - playAreaRect.top - this.dragOffsetY;
+
+              this.currentDraggedElement.style.position = 'absolute';
+              this.currentDraggedElement.style.left = `${offsetX}px`;
+              this.currentDraggedElement.style.top = `${offsetY}px`;
+              this.currentDraggedElement.style.zIndex = '9999';
+            } catch (e) {
+              console.warn(
+                'Allonsh Warning: Could not append dragged element back to play area.',
+                e
+              );
+            }
+          }
+        }
+      }
+
+      this._resetDraggedElementState();
+    } catch (err) {
+      console.error('Allonsh Error handling drop:', err);
+      if (this.restrictToDropzones) {
+        this._returnToOrigin();
+      }
+      this._resetDraggedElementState();
+    }
+  }
+
+  _returnToOrigin() {
+    try {
+      if (
+        this.originalDropzone &&
+        !this._isDropzoneRestricted(this.originalDropzone)
+      ) {
+        if (this.enableStacking) {
+          this._applyStackingStyles(this.originalDropzone);
+        }
+        this._resetPositionToRelative(this.currentDraggedElement);
+        this.originalDropzone.appendChild(this.currentDraggedElement);
+      } else {
+        this._resetPositionToRelative(this.currentDraggedElement);
+        this.playAreaElement.appendChild(this.currentDraggedElement);
+      }
+    } catch (err) {
+      console.error('Allonsh Error returning element to origin:', err);
+    }
+  }
+
+  _isDropzoneRestricted(dropzone) {
+    return dropzone && dropzone.classList.contains('restricted');
+  }
+
+  _resetDraggedElementState() {
+    if (!this.currentDraggedElement) return;
+
+    try {
+      this.currentDraggedElement.style.cursor = 'grab';
+      this.currentDraggedElement.style.zIndex = '';
+      this._toggleDropzoneHighlight(false);
+
+      if (
+        this.useGhostEffect &&
+        this.ghostElement &&
+        this.ghostElement.parentElement
+      ) {
+        this.ghostElement.parentElement.removeChild(this.ghostElement);
+        this.ghostElement = null;
+      }
+    } catch (err) {
+      console.error('Allonsh Error resetting dragged element state:', err);
+    } finally {
+      this.currentDraggedElement = null;
+      this.originalParent = null;
+      this.originalDropzone = null;
+    }
+  }
+
+  _findClosestDropzone(element) {
+    let el = element;
+    while (el && el !== this.playAreaElement) {
+      if (this._dropzoneSet.has(el)) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  _resetPositionToRelative(element) {
+    try {
+      element.style.left = '';
+      element.style.top = '';
+      element.style.position = 'relative';
+    } catch (err) {
+      console.error('Allonsh Error resetting element position:', err);
+    }
+  }
+
+  _toggleDropzoneHighlight(enable) {
+    try {
+      this.dropzoneElements.forEach((dropzone) => {
+        dropzone.classList.toggle('allonsh-highlight', enable);
+      });
+    } catch (err) {
+      console.error('Allonsh Error toggling dropzone highlight:', err);
+    }
+  }
+
+  resetAll() {
+    try {
+      this.draggableElements.forEach((el) => {
+        if (this.playAreaElement.contains(el)) {
+          this.playAreaElement.appendChild(el);
+          this._resetPositionToRelative(el);
+        }
+      });
+    } catch (err) {
+      console.error('Allonsh Error resetting all draggables:', err);
+    }
+  }
+
+  addDraggable(element) {
+    try {
+      if (!element.classList.contains('allonsh-draggable')) {
+        element.classList.add('allonsh-draggable');
+      }
+      element.style.cursor = 'grab';
+      element.addEventListener('mousedown', this._boundMouseDown);
+      element.addEventListener('touchstart', this._boundTouchStart, {
+        passive: false,
+      });
+
+      this.draggableElements =
+        this.playAreaElement.querySelectorAll('.allonsh-draggable');
+    } catch (err) {
+      console.error('Allonsh Error adding draggable element:', err);
+    }
+  }
+
+  removeDraggable(element) {
+    try {
+      element.removeEventListener('mousedown', this._boundMouseDown);
+      element.removeEventListener('touchstart', this._boundTouchStart);
+
+      if (element.classList.contains('allonsh-draggable')) {
+        element.classList.remove('allonsh-draggable');
+      }
+
+      this.draggableElements =
+        this.playAreaElement.querySelectorAll('.allonsh-draggable');
+    } catch (err) {
+      console.error('Allonsh Error removing draggable element:', err);
+    }
+  }
+
+  setDropzones(selector) {
+    try {
+      this.dropzoneElements = this.playAreaElement.querySelectorAll(
+        `.${selector}`
+      );
+      this._dropzoneSet = new Set(this.dropzoneElements);
+    } catch (err) {
+      console.error('Allonsh Error setting dropzones:', err);
     }
   }
 }

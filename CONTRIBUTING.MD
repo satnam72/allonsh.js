@@ -15,7 +15,7 @@ First off, thank you for considering contributing to allonsh.js! We welcome impr
 
 ## Code Style & Commit Messages
 
-We follow Conventional Commits to keep commit history clear and enable automatic changelog generation.
+We encourage following Conventional Commits to keep commit history clear and support changelog generation.
 
 Here are the common commit types and examples:
 
@@ -43,7 +43,7 @@ Here are the common commit types and examples:
 - **chore:** Changes to the build process or auxiliary tools and libraries such as documentation generation  
   Example: chore: update dependencies
 
-Please write clear, concise commit messages using this format.
+Please write clear, concise commit messages.
 
 ---
 
