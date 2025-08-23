@@ -6,4 +6,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
   },
+  environmentOptions: {
+    jsdom: { url: 'http://localhost/' },
+  },
+  restoreMocks: true,
+  clearMocks: true,
+  mockReset: true,
+  coverage: {
+    reporter: ['text', 'html'],
+    include: ['src/**/*.js'],
+  },
 });
