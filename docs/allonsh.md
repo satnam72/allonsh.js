@@ -1,4 +1,4 @@
-# Allonsh
+# Allonsh Docs
 
 Create dynamic drag-and-drop interfaces with customizable behaviors like restricted dropzones, element stacking, and ghost visuals for seamless user interaction.
 

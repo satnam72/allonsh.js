@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0] - 2025-08-23
+
+### Stable Release
+
+This is the first stable release of Allonsh.js, promoted from `0.1.0-rc` without further changes.
+
+
 ## [0.1.0-rc] - 2025-08-22
 
 ### Added
@@ -33,6 +40,8 @@ All notable changes to this project will be documented in this file.
 - Fixed the issue where touch dragging might cause unexpected scrolling or behavior inconsistencies.
 - Corrected the dragging boundaries when the element is moved near the edge of the play area, preventing overflow.
 - Ensured proper cleanup of ghost elements and event listeners to prevent memory leaks.
+
+**Full Changelog**: https://github.com/satnam72/allonsh.js/compare/v0.1.0-beta.1...v0.1.0-beta.2
 
 ## [0.1.0-beta.1] - 2025-08-16
 
