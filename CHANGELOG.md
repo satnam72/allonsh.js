@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0-rc] - 2025-08-22
+
+### Added
+
+- Added documentation file `docs/allonsh.md`.
+- Minor updates to the demo page for improved clarity and usability.
+- Added initial test coverage for core draggable functionality.
+
 ## [0.1.0-beta.2] - 2025-08-20
 
 ### Added

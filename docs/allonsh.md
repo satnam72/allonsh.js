@@ -90,3 +90,4 @@ const dragDrop = new Allonsh({
   stackSpacing: 10,
   useGhostEffect: true,
 });
+```
