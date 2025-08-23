@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import Allonsh from '../src/allonsh.js'
+import Allonsh from '../src/allonsh.js';
 
 function createDOM() {
   document.body.innerHTML = `
@@ -38,13 +38,13 @@ describe('Allonsh', () => {
 
   it('should attach draggable elements', () => {
     expect(allonsh.draggableElements.length).toBe(2);
-    allonsh.draggableElements.forEach(el => {
+    allonsh.draggableElements.forEach((el) => {
       expect(el.style.cursor).toBe('grab');
     });
   });
 
   it('should apply stacking styles to dropzones', () => {
-    allonsh.dropzoneElements.forEach(el => {
+    allonsh.dropzoneElements.forEach((el) => {
       expect(el.style.display).toBe('flex');
     });
   });
@@ -88,44 +88,43 @@ describe('Allonsh', () => {
     expect(el2.parentElement.classList.contains('play-area')).toBe(true);
   });
 
-it('should create ghost element on drag start when enabled', () => {
-  const el = allonsh.draggableElements[0];
-  const dropzone = allonsh.dropzoneElements[0];
+  it('should create ghost element on drag start when enabled', () => {
+    const el = allonsh.draggableElements[0];
+    const dropzone = allonsh.dropzoneElements[0];
 
-  // Move the draggable element into a dropzone to simulate a real drag
-  dropzone.appendChild(el);
+    // Move the draggable element into a dropzone to simulate a real drag
+    dropzone.appendChild(el);
 
-  // Mock the position of the draggable
-  vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
-    left: 100,
-    top: 100,
-    width: 50,
-    height: 50,
-    right: 150,
-    bottom: 150,
-    x: 100,
-    y: 100,
-    toJSON: () => {},
+    // Mock the position of the draggable
+    vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      top: 100,
+      width: 50,
+      height: 50,
+      right: 150,
+      bottom: 150,
+      x: 100,
+      y: 100,
+      toJSON: () => {},
+    });
+
+    vi.spyOn(allonsh.playAreaElement, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 1000,
+      height: 1000,
+      right: 1000,
+      bottom: 1000,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    });
+
+    allonsh._startDrag({ currentTarget: el }, 110, 110);
+
+    expect(allonsh.ghostElement).toBeTruthy();
+    expect(allonsh.ghostElement.style.position).toBe('absolute');
   });
-
-  vi.spyOn(allonsh.playAreaElement, 'getBoundingClientRect').mockReturnValue({
-    left: 0,
-    top: 0,
-    width: 1000,
-    height: 1000,
-    right: 1000,
-    bottom: 1000,
-    x: 0,
-    y: 0,
-    toJSON: () => {},
-  });
-
-  allonsh._startDrag({ currentTarget: el }, 110, 110);
-
-  expect(allonsh.ghostElement).toBeTruthy();
-  expect(allonsh.ghostElement.style.position).toBe('absolute');
-});
-
 
   it('should return to origin if dropped outside dropzone with restriction on', () => {
     const el = allonsh.draggableElements[0];
@@ -165,4 +164,3 @@ it('should create ghost element on drag start when enabled', () => {
     expect(dropHandler).toHaveBeenCalled();
   });
 });
-
