@@ -16,7 +16,7 @@ media="(prefers-color-scheme: light)"
 
 Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.
 
-![Version Badge](https://img.shields.io/badge/Current_Version-v0.1.0--beta2-blue.svg)
+![Version Badge](https://img.shields.io/badge/Current_Version-v0.1.0--rc-blue.svg)
 
 ## Features
 
@@ -52,7 +52,8 @@ const allonsh = new Allonsh({
 ## Demo
 
 You can explore all the features of Allonsh.js through the live demo page:
-[Live Demo](https://satnam72.github.io/allonsh.js/)
+
+### [Live Demo](https://satnam72.github.io/allonsh.js/)
 
 Try the demo by running a local server and opening the demo page:
 
