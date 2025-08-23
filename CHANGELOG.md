@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file.
 
 This is the first stable release of Allonsh.js, promoted from `0.1.0-rc` without further changes.
 
-
 ## [0.1.0-rc] - 2025-08-22
 
 ### Added
