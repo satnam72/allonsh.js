@@ -82,15 +82,24 @@ Allonsh dispatches the following custom events on relevant elements:
 
 ```js
 import Allonsh from 'allonsh';
+import { CSS_CLASSES, EVENTS } from 'allonsh/constants';
 
 const dragDrop = new Allonsh({
-  draggableSelector: 'draggable',
-  dropzoneSelector: 'dropzone',
+  draggableSelector: CSS_CLASSES.DRAGGABLE,
+  dropzoneSelector: CSS_CLASSES.DROPZONE,
   playAreaSelector: 'play-area',
   restrictToDropzones: true,
   enableStacking: true,
   stackDirection: 'vertical',
   stackSpacing: 10,
   useGhostEffect: true,
+});
+
+// Listen for custom events
+document.addEventListener(EVENTS.DRAG_START, (e) => {
+  // handle drag start
+});
+document.addEventListener(EVENTS.DROP, (e) => {
+  // handle drop
 });
 ```
