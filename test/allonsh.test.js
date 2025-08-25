@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Allonsh from '../src/allonsh.js';
+import { EVENTS } from '../src/constants.js';
 
 function createDOM() {
   document.body.innerHTML = `
@@ -154,7 +155,7 @@ describe('Allonsh', () => {
     const el = allonsh.draggableElements[0];
     const dropzone = allonsh.dropzoneElements[0];
     const dropHandler = vi.fn();
-    dropzone.addEventListener('allonsh-drop', dropHandler);
+    dropzone.addEventListener(EVENTS.DROP, dropHandler);
 
     document.elementFromPoint = vi.fn(() => dropzone);
 

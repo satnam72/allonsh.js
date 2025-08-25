@@ -38,7 +38,9 @@ let enableStackingBool = true;
 let restrictDropzoneBool = true;
 
 let ghostEffectBool = true;
-let stackSpacingDefault = 10;
+import { DEFAULTS } from '../../src/constants.js';
+
+let stackSpacingDefault = DEFAULTS.STACK_SPACING_DEMO;
 
 function initAllonsh(options) {
   if (allonshInstance) {
@@ -142,7 +144,7 @@ resetBtn.addEventListener('click', () => {
   enableStackingBool = true;
   restrictDropzoneBool = true;
   ghostEffectBool = true;
-  stackSpacingDefault = 10;
+  stackSpacingDefault = DEFAULTS.STACK_SPACING_DEMO;
   currentStackDirection = 'horizontal';
   setDefaultsOnLoad();
   updateStackDirectionButtons();
