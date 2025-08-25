@@ -1,23 +1,17 @@
-name: PR Comment on Open
+name: Add Comment to PR
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
-
-permissions:
-  pull-requests: write
 
 jobs:
   comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Comment on PR
-        uses: peter-evans/create-or-update-comment@v3
+      - name: Create or Update Comment
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
