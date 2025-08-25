@@ -16,11 +16,13 @@ Creates a new Allonsh instance.
   - `draggableSelector` (string, **required**) — CSS class name for draggable elements.
   - `dropzoneSelector` (string, optional) — CSS class name for dropzone elements.
   - `playAreaSelector` (string, optional) — CSS class name for the play area container. Defaults to `document.body`.
-  - `restrictToDropzones` (boolean, optional) — If `true`, dragging outside dropzones will return element to origin. Default: `false`.
+  - `restrictToDropzones` (boolean, optional) — If `true`, dragging outside dropzones will return the element to its origin. Default: `false`.
   - `enableStacking` (boolean, optional) — Enables stacking layout in dropzones. Default: `false`.
   - `stackDirection` (string, optional) — `'horizontal'` or `'vertical'` stacking direction. Default: `'horizontal'`.
   - `stackSpacing` (number, optional) — Space in pixels between stacked elements. Default: `5`.
   - `useGhostEffect` (boolean, optional) — Uses a semi-transparent clone as a "ghost" while dragging. Default: `false`.
+
+**Note:** The draggableSelector, dropzoneSelector, and playAreaSelector parameters expect class names without the leading '.' For example, if the class name is .draggable, pass draggable (without the dot).
 
 ---
 
