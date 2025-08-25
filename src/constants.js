@@ -10,7 +10,7 @@ export const Z_INDEX = {
   HEADER: 10,
   THEME_TOGGLE: 9,
   CONTROL_PANEL: 5,
-  FREEMODE_TITLE: 5
+  FREEMODE_TITLE: 5,
 };
 
 export const DEFAULTS = {
@@ -18,51 +18,51 @@ export const DEFAULTS = {
   STACK_SPACING_DEMO: 10,
   STACK_DIRECTION: 'horizontal',
   STACK_DIRECTION_VERTICAL: 'vertical',
-  STACK_DIRECTION_HORIZONTAL: 'horizontal'
+  STACK_DIRECTION_HORIZONTAL: 'horizontal',
 };
 
 export const CSS_CLASSES = {
   DROPZONE: 'allonsh-dropzone',
   HIGHLIGHT: 'allonsh-highlight',
   DRAGGABLE: 'allonsh-draggable',
-  RESTRICTED: 'restricted'
+  RESTRICTED: 'restricted',
 };
 
 export const CSS_POSITIONS = {
   RELATIVE: 'relative',
-  ABSOLUTE: 'absolute'
+  ABSOLUTE: 'absolute',
 };
 
 export const CSS_CURSORS = {
   GRAB: 'grab',
-  GRABBING: 'grabbing'
+  GRABBING: 'grabbing',
 };
 
 export const OPACITY = {
   GHOST: '0.3',
-  FULL: '1'
+  FULL: '1',
 };
 
 export const EVENTS = {
   DRAG_START: 'allonsh-dragstart',
   DROP: 'allonsh-drop',
   DRAG_ENTER: 'allonsh-dragenter',
-  DRAG_LEAVE: 'allonsh-dragleave'
+  DRAG_LEAVE: 'allonsh-dragleave',
 };
 
 export const FLEX_DIRECTIONS = {
   ROW: 'row',
-  COLUMN: 'column'
+  COLUMN: 'column',
 };
 
 export const FLEX_WRAP = 'wrap';
 
 export const DISPLAY_MODES = {
   FLEX: 'flex',
-  NONE: 'none'
+  NONE: 'none',
 };
 
 export const POINTER_EVENTS = {
   NONE: 'none',
-  AUTO: 'auto'
+  AUTO: 'auto',
 };

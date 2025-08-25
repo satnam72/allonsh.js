@@ -1,11 +1,13 @@
 # Allonsh Constants Refactor Summary
 
 ## Overview
+
 This document summarizes the refactoring work done to replace hardcoded values with meaningful constants throughout the Allonsh library.
 
 ## Files Created/Modified
 
 ### 1. New Constants File: `src/constants.js`
+
 - **Z_INDEX**: Centralized z-index values (GHOST: 999, DRAGGING: 1000, DROPPED: 9999, etc.)
 - **DEFAULTS**: Default configuration values (stack spacing, direction)
 - **CSS_CLASSES**: Consistent CSS class names
@@ -18,24 +20,29 @@ This document summarizes the refactoring work done to replace hardcoded values w
 - **POINTER_EVENTS**: Pointer-events values
 
 ### 2. Main Library: `src/allonsh.js`
+
 **Replaced hardcoded values with constants:**
 
 #### Z-Index Values:
+
 - `999` → `Z_INDEX.GHOST`
 - `1000` → `Z_INDEX.DRAGGING`
 - `9999` → `Z_INDEX.DROPPED`
 
 #### Default Values:
+
 - `'horizontal'` → `DEFAULTS.STACK_DIRECTION`
 - `5` → `DEFAULTS.STACK_SPACING`
 
 #### CSS Class Names:
+
 - `'allonsh-dropzone'` → `CSS_CLASSES.DROPZONE`
 - `'allonsh-highlight'` → `CSS_CLASSES.HIGHLIGHT`
 - `'allonsh-draggable'` → `CSS_CLASSES.DRAGGABLE`
 - `'restricted'` → `CSS_CLASSES.RESTRICTED`
 
 #### CSS Properties:
+
 - `'relative'` → `CSS_POSITIONS.RELATIVE`
 - `'absolute'` → `CSS_POSITIONS.ABSOLUTE`
 - `'grab'` → `CSS_CURSORS.GRAB`
@@ -46,28 +53,34 @@ This document summarizes the refactoring work done to replace hardcoded values w
 - `'wrap'` → `FLEX_WRAP`
 
 #### Opacity Values:
+
 - `'0.3'` → `OPACITY.GHOST`
 - `'1'` → `OPACITY.FULL`
 
 #### Pointer Events:
+
 - `'none'` → `POINTER_EVENTS.NONE`
 - `'auto'` → `POINTER_EVENTS.AUTO`
 
 #### Event Names:
+
 - `'allonsh-dragstart'` → `EVENTS.DRAG_START`
 - `'allonsh-drop'` → `EVENTS.DROP`
 - `'allonsh-dragenter'` → `EVENTS.DRAG_ENTER`
 - `'allonsh-dragleave'` → `EVENTS.DRAG_LEAVE`
 
 ### 3. Demo Script: `demo/js/script.js`
+
 - Imported constants for default values
 - Replaced hardcoded `10` with `DEFAULTS.STACK_SPACING_DEMO`
 
 ### 4. Test File: `test/allonsh.test.js`
+
 - Imported constants for event names
 - Replaced hardcoded event name with `EVENTS.DROP`
 
 ### 5. CSS File: `demo/css/styles.css`
+
 - Added comments indicating z-index values could be updated to use CSS custom properties
 - Values remain hardcoded for now but are documented for future refactoring
 

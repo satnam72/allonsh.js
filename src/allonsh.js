@@ -9,7 +9,7 @@ import {
   FLEX_DIRECTIONS,
   FLEX_WRAP,
   DISPLAY_MODES,
-  POINTER_EVENTS
+  POINTER_EVENTS,
 } from './constants.js';
 
 class Allonsh {
@@ -215,7 +215,9 @@ class Allonsh {
     try {
       dropzone.style.display = DISPLAY_MODES.FLEX;
       dropzone.style.flexDirection =
-        this.stackDirection === DEFAULTS.STACK_DIRECTION_VERTICAL ? FLEX_DIRECTIONS.COLUMN : FLEX_DIRECTIONS.ROW;
+        this.stackDirection === DEFAULTS.STACK_DIRECTION_VERTICAL
+          ? FLEX_DIRECTIONS.COLUMN
+          : FLEX_DIRECTIONS.ROW;
       dropzone.style.gap = `${this.stackSpacing}px`;
       dropzone.style.flexWrap = FLEX_WRAP;
     } catch (err) {
@@ -548,7 +550,8 @@ class Allonsh {
               const offsetX = clampedX - playAreaRect.left - this.dragOffsetX;
               const offsetY = clampedY - playAreaRect.top - this.dragOffsetY;
 
-              this.currentDraggedElement.style.position = CSS_POSITIONS.ABSOLUTE;
+              this.currentDraggedElement.style.position =
+                CSS_POSITIONS.ABSOLUTE;
               this.currentDraggedElement.style.left = `${offsetX}px`;
               this.currentDraggedElement.style.top = `${offsetY}px`;
               this.currentDraggedElement.style.zIndex = Z_INDEX.DROPPED;
@@ -676,8 +679,9 @@ class Allonsh {
         passive: false,
       });
 
-      this.draggableElements =
-        this.playAreaElement.querySelectorAll(`.${CSS_CLASSES.DRAGGABLE}`);
+      this.draggableElements = this.playAreaElement.querySelectorAll(
+        `.${CSS_CLASSES.DRAGGABLE}`
+      );
     } catch (err) {
       console.error('Allonsh Error adding draggable element:', err);
     }
@@ -692,8 +696,9 @@ class Allonsh {
         element.classList.remove(CSS_CLASSES.DRAGGABLE);
       }
 
-      this.draggableElements =
-        this.playAreaElement.querySelectorAll(`.${CSS_CLASSES.DRAGGABLE}`);
+      this.draggableElements = this.playAreaElement.querySelectorAll(
+        `.${CSS_CLASSES.DRAGGABLE}`
+      );
     } catch (err) {
       console.error('Allonsh Error removing draggable element:', err);
     }
