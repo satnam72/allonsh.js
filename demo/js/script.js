@@ -3,6 +3,7 @@ import Allonsh from '../../src/allonsh.js';
 const openPanelBtn = document.getElementById('openPanelBtn');
 const closePanelBtn = document.getElementById('closePanelBtn');
 
+import { DEFAULTS, CSS_CLASSES, EVENTS } from '../../src/constants.js';
 const controlPanel = document.getElementById('controlPanel');
 
 const toggleStackCheckbox = document.getElementById('stackCheckbox');
@@ -97,8 +98,8 @@ function updateStackDirectionButtons() {
     verticalStackBtn.classList.add('selected');
     horizontalStackBtn.classList.remove('selected');
   } else {
-    verticalStackBtn.classList.remove('selected');
-    horizontalStackBtn.classList.add('selected');
+    const draggableSelectorClass = CSS_CLASSES.DRAGGABLE;
+    const dropzoneSelectorClass = CSS_CLASSES.DROPZONE;
   }
 }
 
@@ -179,18 +180,20 @@ restrictDropzoneCheckbox.addEventListener('change', () => {
 function logDraggablesOutsideDropzones() {
   const playAreaElement = document.querySelector(`.${playAreaSelectorClass}`);
 
-  playAreaElement.querySelectorAll('.draggable').forEach((element) => {
-    if (
-      ![...playAreaElement.querySelectorAll('.dropzone')].some((dropzone) =>
-        dropzone.contains(element)
-      )
-    ) {
-      element.style.position = 'relative';
-      element.style.left = '';
-      element.style.top = '';
-      draggableContainer.appendChild(element);
-    }
-  });
+  playAreaElement
+    .querySelectorAll(`.${CSS_CLASSES.DRAGGABLE}`)
+    .forEach((element) => {
+      if (
+        ![...playAreaElement.querySelectorAll(`.${CSS_CLASSES.DROPZONE}`)].some(
+          (dropzone) => dropzone.contains(element)
+        )
+      ) {
+        element.style.position = 'relative';
+        element.style.left = '';
+        element.style.top = '';
+        draggableContainer.appendChild(element);
+      }
+    });
 }
 
 openPanelBtn.addEventListener('click', () => {
@@ -206,7 +209,7 @@ function togglePanel() {
 }
 
 function emptyDropzones() {
-  const dropzones = document.querySelectorAll('.dropzone');
+  const dropzones = document.querySelectorAll(`.${CSS_CLASSES.DROPZONE}`);
   dropzones.forEach((dropzone) => {
     while (dropzone.firstChild) {
       dropzone.removeChild(dropzone.firstChild);

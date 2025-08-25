@@ -117,7 +117,7 @@ class Allonsh {
       const newPlayArea = document.querySelector(`.${playAreaSelector}`);
       if (newPlayArea) {
         this.playAreaElement = newPlayArea;
-        this.playAreaElement.style.position = 'relative';
+        this.playAreaElement.style.position = CSS_POSITIONS.RELATIVE;
       } else {
         console.warn(
           `Allonsh Warning: Play area element with class '${playAreaSelector}' not found.`
@@ -166,7 +166,7 @@ class Allonsh {
         'Allonsh Initialization Error: Play area element is not defined.'
       );
     }
-    this.playAreaElement.style.position = 'relative';
+    this.playAreaElement.style.position = CSS_POSITIONS.RELATIVE;
 
     if (!this.draggableElements || this.draggableElements.length === 0) {
       console.warn('Allonsh Warning: No draggable elements to initialize.');

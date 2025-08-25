@@ -57,7 +57,10 @@ body {
 /* Header */
 .demo-header {
   position: fixed;
-  z-index: 10; /* This could be updated to use CSS custom properties if needed */
+  z-index: var(
+    --allonsh-z-index-header,
+    10
+  ); /* migrated to CSS custom property */
   box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: space-between;
@@ -212,7 +215,7 @@ body.night .demo-section__playground {
   margin-top: 3rem;
   padding: 2rem 0;
   font-size: 0.95rem;
-  opacity: 0.8;
+  opacity: var(--allonsh-opacity-demo, 0.8);
 }
 
 /* Theme Toggle (if applicable) */
@@ -226,7 +229,10 @@ body.night .demo-section__playground {
   padding: 0.6rem;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1000; /* This could be updated to use CSS custom properties if needed */
+  z-index: var(
+    --allonsh-z-index-dragging,
+    1000
+  ); /* migrated to CSS custom property */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -260,7 +266,7 @@ body.night .demo-section__playground {
   justify-content: center;
   height: 500px;
   background-color: var(--panel-bg);
-  opacity: 0.8;
+  opacity: var(--allonsh-opacity-demo, 0.8);
   background-image:
     linear-gradient(135deg, var(--panel-border) 25%, transparent 25%),
     linear-gradient(225deg, var(--panel-border) 25%, transparent 25%),
@@ -287,7 +293,10 @@ body.night .demo-section__playground {
   background-color: var(--bg-color);
   padding: 1rem;
   left: 1.5rem;
-  z-index: 5; /* This could be updated to use CSS custom properties if needed */
+  z-index: var(
+    --allonsh-z-index-control-panel,
+    5
+  ); /* migrated to CSS custom property */
   font-size: 1.2rem;
   font-weight: 600;
   border: 2px solid var(--panel-border);
@@ -354,7 +363,7 @@ body.night .demo-section__playground {
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-  z-index: 5;
+  z-index: var(--allonsh-z-index-freemode-title, 5);
 }
 
 .toggle-panel-btn.open {
@@ -427,7 +436,10 @@ body.night .demo-section__playground {
   border-radius: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
-  z-index: 9; /* This could be updated to use CSS custom properties if needed */
+  z-index: var(
+    --allonsh-z-index-theme-toggle,
+    9
+  ); /* migrated to CSS custom property */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -445,7 +457,10 @@ body.night .demo-section__playground {
     position: fixed;
     bottom: 1rem;
     left: 1rem;
-    z-index: 9; /* This could be updated to use CSS custom properties if needed */
+    z-index: var(
+      --allonsh-z-index-theme-toggle,
+      9
+    ); /* migrated to CSS custom property */
     transform: translateX(-120%);
     transition: transform 0.3s ease;
   }

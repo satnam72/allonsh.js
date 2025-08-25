@@ -36,9 +36,6 @@ This document summarizes the refactoring work done to replace hardcoded values w
 
 #### CSS Class Names:
 
-- `'allonsh-dropzone'` → `CSS_CLASSES.DROPZONE`
-- `'allonsh-highlight'` → `CSS_CLASSES.HIGHLIGHT`
-- `'allonsh-draggable'` → `CSS_CLASSES.DRAGGABLE`
 - `'restricted'` → `CSS_CLASSES.RESTRICTED`
 
 #### CSS Properties:
@@ -63,11 +60,6 @@ This document summarizes the refactoring work done to replace hardcoded values w
 - `'auto'` → `POINTER_EVENTS.AUTO`
 
 #### Event Names:
-
-- `'allonsh-dragstart'` → `EVENTS.DRAG_START`
-- `'allonsh-drop'` → `EVENTS.DROP`
-- `'allonsh-dragenter'` → `EVENTS.DRAG_ENTER`
-- `'allonsh-dragleave'` → `EVENTS.DRAG_LEAVE`
 
 ### 3. Demo Script: `demo/js/script.js`
 
