@@ -1,6 +1,6 @@
-# Contributing to allonsh.js
+# Contributing to Allonsh.js
 
-First off, thank you for considering contributing to allonsh.js! We welcome improvements, bug fixes, documentation updates, and ideas.
+First off, thank you for considering contributing to Allonsh.js! We welcome improvements, bug fixes, documentation updates, and ideas.
 
 ## How to Contribute
 
@@ -83,4 +83,4 @@ Be respectful and courteous. We aim for an inclusive and welcoming community.
 
 ---
 
-Thank you for contributing to allonsh.js!
+Thank you for contributing to Allonsh.js!
