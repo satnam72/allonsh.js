@@ -5,6 +5,9 @@ on:
     types:
       - opened
 
+permissions:
+  pull-requests: write
+
 jobs:
   comment:
     runs-on: ubuntu-latest
@@ -18,4 +21,4 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Hi @${{ github.event.pull_request.user.login }}! Thank you for the contribution. We will review your PR shortly.
+            Hi @${{ github.event.pull_request.user.login }}! Thank you for the contribution.
