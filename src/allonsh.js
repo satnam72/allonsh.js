@@ -1,3 +1,17 @@
+import {
+  Z_INDEX,
+  DEFAULTS,
+  CSS_CLASSES,
+  CSS_POSITIONS,
+  CSS_CURSORS,
+  OPACITY,
+  EVENTS,
+  FLEX_DIRECTIONS,
+  FLEX_WRAP,
+  DISPLAY_MODES,
+  POINTER_EVENTS,
+} from './constants.js';
+
 class Allonsh {
   constructor(options = {}) {
     const {
@@ -6,8 +20,8 @@ class Allonsh {
       playAreaSelector = null,
       restrictToDropzones = false,
       enableStacking = false,
-      stackDirection = 'horizontal',
-      stackSpacing = 5,
+      stackDirection = DEFAULTS.STACK_DIRECTION,
+      stackSpacing = DEFAULTS.STACK_SPACING,
       useGhostEffect = false,
     } = options;
 
@@ -103,7 +117,7 @@ class Allonsh {
       const newPlayArea = document.querySelector(`.${playAreaSelector}`);
       if (newPlayArea) {
         this.playAreaElement = newPlayArea;
-        this.playAreaElement.style.position = 'relative';
+        this.playAreaElement.style.position = CSS_POSITIONS.RELATIVE;
       } else {
         console.warn(
           `Allonsh Warning: Play area element with class '${playAreaSelector}' not found.`
@@ -117,7 +131,7 @@ class Allonsh {
     );
 
     this.draggableElements.forEach((element) => {
-      element.style.cursor = 'grab';
+      element.style.cursor = CSS_CURSORS.GRAB;
       element.addEventListener('mousedown', this._boundMouseDown);
       element.addEventListener('touchstart', this._boundTouchStart, {
         passive: false,
@@ -152,7 +166,7 @@ class Allonsh {
         'Allonsh Initialization Error: Play area element is not defined.'
       );
     }
-    this.playAreaElement.style.position = 'relative';
+    this.playAreaElement.style.position = CSS_POSITIONS.RELATIVE;
 
     if (!this.draggableElements || this.draggableElements.length === 0) {
       console.warn('Allonsh Warning: No draggable elements to initialize.');
@@ -161,7 +175,7 @@ class Allonsh {
 
     this.draggableElements.forEach((element) => {
       try {
-        element.style.cursor = 'grab';
+        element.style.cursor = CSS_CURSORS.GRAB;
         element.addEventListener('mousedown', this._onMouseDown.bind(this));
         element.addEventListener('touchstart', this._onTouchStart.bind(this), {
           passive: false,
@@ -177,7 +191,7 @@ class Allonsh {
     if (this.dropzoneElements) {
       this.dropzoneElements.forEach((dropzone) => {
         try {
-          dropzone.classList.add('allonsh-dropzone');
+          dropzone.classList.add(CSS_CLASSES.DROPZONE);
           if (this.enableStacking) {
             this._applyStackingStyles(dropzone);
           }
@@ -199,11 +213,13 @@ class Allonsh {
 
   _applyStackingStyles(dropzone) {
     try {
-      dropzone.style.display = 'flex';
+      dropzone.style.display = DISPLAY_MODES.FLEX;
       dropzone.style.flexDirection =
-        this.stackDirection === 'vertical' ? 'column' : 'row';
+        this.stackDirection === DEFAULTS.STACK_DIRECTION_VERTICAL
+          ? FLEX_DIRECTIONS.COLUMN
+          : FLEX_DIRECTIONS.ROW;
       dropzone.style.gap = `${this.stackSpacing}px`;
-      dropzone.style.flexWrap = 'wrap';
+      dropzone.style.flexWrap = FLEX_WRAP;
     } catch (err) {
       console.error('Allonsh Error applying stacking styles:', err);
     }
@@ -288,14 +304,14 @@ class Allonsh {
   }
 
   _onPointerUp(clientX, clientY, event) {
-    this.currentDraggedElement.style.opacity = '1';
+    this.currentDraggedElement.style.opacity = OPACITY.FULL;
     this._handleDrop(clientX, clientY, event);
   }
 
   _startDrag(event, clientX, clientY) {
     try {
       this.currentDraggedElement = event.currentTarget;
-      this.currentDraggedElement.style.cursor = 'grabbing';
+      this.currentDraggedElement.style.cursor = CSS_CURSORS.GRABBING;
 
       this.originalParent = this.currentDraggedElement.parentElement;
       this.originalDropzone = this._findClosestDropzone(
@@ -316,12 +332,12 @@ class Allonsh {
         }
 
         this.ghostElement = this.currentDraggedElement.cloneNode(true);
-        this.ghostElement.style.pointerEvents = 'none';
-        this.ghostElement.style.position = 'absolute';
+        this.ghostElement.style.pointerEvents = POINTER_EVENTS.NONE;
+        this.ghostElement.style.position = CSS_POSITIONS.ABSOLUTE;
 
-        this.ghostElement.style.zIndex = '999';
+        this.ghostElement.style.zIndex = Z_INDEX.GHOST;
 
-        this.currentDraggedElement.style.opacity = '0.3';
+        this.currentDraggedElement.style.opacity = OPACITY.GHOST;
         this.playAreaElement.appendChild(this.ghostElement);
 
         this.ghostElement.style.left = `${rect.left - playAreaRect.left}px`;
@@ -333,11 +349,11 @@ class Allonsh {
       this.dragOffsetX = clientX - rect.left;
       this.dragOffsetY = clientY - rect.top;
 
-      this.currentDraggedElement.style.cursor = 'grabbing';
-      this.currentDraggedElement.style.zIndex = 1000;
+      this.currentDraggedElement.style.cursor = CSS_CURSORS.GRABBING;
+      this.currentDraggedElement.style.zIndex = Z_INDEX.DRAGGING;
 
       this.currentDraggedElement.dispatchEvent(
-        new CustomEvent('allonsh-dragstart', {
+        new CustomEvent(EVENTS.DRAG_START, {
           detail: { originalEvent: event },
         })
       );
@@ -357,13 +373,13 @@ class Allonsh {
       const style = element.style;
 
       if (isGhost) {
-        style.pointerEvents = 'none';
-        style.position = 'absolute';
-        style.zIndex = '999';
-        style.opacity = '0.3';
+        style.pointerEvents = POINTER_EVENTS.NONE;
+        style.position = CSS_POSITIONS.ABSOLUTE;
+        style.zIndex = Z_INDEX.GHOST;
+        style.opacity = OPACITY.GHOST;
       } else {
-        style.cursor = 'grabbing';
-        style.zIndex = 1000;
+        style.cursor = CSS_CURSORS.GRABBING;
+        style.zIndex = Z_INDEX.DRAGGING;
       }
 
       if (isGhost && element !== this.ghostElement) {
@@ -402,7 +418,7 @@ class Allonsh {
         this.ghostElement.style.left = `${newLeft}px`;
         this.ghostElement.style.top = `${newTop}px`;
       } else {
-        this.currentDraggedElement.style.position = 'absolute';
+        this.currentDraggedElement.style.position = CSS_POSITIONS.ABSOLUTE;
 
         const playAreaRect = this.playAreaElement.getBoundingClientRect();
         const draggedRect = this.currentDraggedElement.getBoundingClientRect();
@@ -444,9 +460,9 @@ class Allonsh {
         playAreaRect.bottom - 1
       );
 
-      this.currentDraggedElement.style.pointerEvents = 'none';
+      this.currentDraggedElement.style.pointerEvents = POINTER_EVENTS.NONE;
       let elementBelow = document.elementFromPoint(clampedX, clampedY);
-      this.currentDraggedElement.style.pointerEvents = 'auto';
+      this.currentDraggedElement.style.pointerEvents = POINTER_EVENTS.AUTO;
 
       if (!elementBelow) {
         if (this.restrictToDropzones) {
@@ -491,7 +507,7 @@ class Allonsh {
         }
 
         this.currentDropzone.dispatchEvent(
-          new CustomEvent('allonsh-drop', {
+          new CustomEvent(EVENTS.DROP, {
             detail: {
               draggedElement: this.currentDraggedElement,
               originalEvent: event,
@@ -500,17 +516,17 @@ class Allonsh {
         );
 
         this.currentDropzone.dispatchEvent(
-          new CustomEvent('allonsh-dragenter', {
+          new CustomEvent(EVENTS.DRAG_ENTER, {
             detail: { draggedElement: this.currentDraggedElement },
           })
         );
         this.currentDropzone.dispatchEvent(
-          new CustomEvent('allonsh-dragleave', {
+          new CustomEvent(EVENTS.DRAG_LEAVE, {
             detail: { draggedElement: this.currentDraggedElement },
           })
         );
 
-        this.currentDropzone.classList.remove('allonsh-highlight');
+        this.currentDropzone.classList.remove(CSS_CLASSES.HIGHLIGHT);
         this.currentDropzone = null;
       } else {
         if (this.ghostElement && this.ghostElement.parentElement) {
@@ -534,10 +550,11 @@ class Allonsh {
               const offsetX = clampedX - playAreaRect.left - this.dragOffsetX;
               const offsetY = clampedY - playAreaRect.top - this.dragOffsetY;
 
-              this.currentDraggedElement.style.position = 'absolute';
+              this.currentDraggedElement.style.position =
+                CSS_POSITIONS.ABSOLUTE;
               this.currentDraggedElement.style.left = `${offsetX}px`;
               this.currentDraggedElement.style.top = `${offsetY}px`;
-              this.currentDraggedElement.style.zIndex = '9999';
+              this.currentDraggedElement.style.zIndex = Z_INDEX.DROPPED;
             } catch (e) {
               console.warn(
                 'Allonsh Warning: Could not append dragged element back to play area.',
@@ -579,14 +596,14 @@ class Allonsh {
   }
 
   _isDropzoneRestricted(dropzone) {
-    return dropzone && dropzone.classList.contains('restricted');
+    return dropzone && dropzone.classList.contains(CSS_CLASSES.RESTRICTED);
   }
 
   _resetDraggedElementState() {
     if (!this.currentDraggedElement) return;
 
     try {
-      this.currentDraggedElement.style.cursor = 'grab';
+      this.currentDraggedElement.style.cursor = CSS_CURSORS.GRAB;
       this.currentDraggedElement.style.zIndex = '';
       this._toggleDropzoneHighlight(false);
 
@@ -622,7 +639,7 @@ class Allonsh {
     try {
       element.style.left = '';
       element.style.top = '';
-      element.style.position = 'relative';
+      element.style.position = CSS_POSITIONS.RELATIVE;
     } catch (err) {
       console.error('Allonsh Error resetting element position:', err);
     }
@@ -631,7 +648,7 @@ class Allonsh {
   _toggleDropzoneHighlight(enable) {
     try {
       this.dropzoneElements.forEach((dropzone) => {
-        dropzone.classList.toggle('allonsh-highlight', enable);
+        dropzone.classList.toggle(CSS_CLASSES.HIGHLIGHT, enable);
       });
     } catch (err) {
       console.error('Allonsh Error toggling dropzone highlight:', err);
@@ -653,17 +670,18 @@ class Allonsh {
 
   addDraggable(element) {
     try {
-      if (!element.classList.contains('allonsh-draggable')) {
-        element.classList.add('allonsh-draggable');
+      if (!element.classList.contains(CSS_CLASSES.DRAGGABLE)) {
+        element.classList.add(CSS_CLASSES.DRAGGABLE);
       }
-      element.style.cursor = 'grab';
+      element.style.cursor = CSS_CURSORS.GRAB;
       element.addEventListener('mousedown', this._boundMouseDown);
       element.addEventListener('touchstart', this._boundTouchStart, {
         passive: false,
       });
 
-      this.draggableElements =
-        this.playAreaElement.querySelectorAll('.allonsh-draggable');
+      this.draggableElements = this.playAreaElement.querySelectorAll(
+        `.${CSS_CLASSES.DRAGGABLE}`
+      );
     } catch (err) {
       console.error('Allonsh Error adding draggable element:', err);
     }
@@ -674,12 +692,13 @@ class Allonsh {
       element.removeEventListener('mousedown', this._boundMouseDown);
       element.removeEventListener('touchstart', this._boundTouchStart);
 
-      if (element.classList.contains('allonsh-draggable')) {
-        element.classList.remove('allonsh-draggable');
+      if (element.classList.contains(CSS_CLASSES.DRAGGABLE)) {
+        element.classList.remove(CSS_CLASSES.DRAGGABLE);
       }
 
-      this.draggableElements =
-        this.playAreaElement.querySelectorAll('.allonsh-draggable');
+      this.draggableElements = this.playAreaElement.querySelectorAll(
+        `.${CSS_CLASSES.DRAGGABLE}`
+      );
     } catch (err) {
       console.error('Allonsh Error removing draggable element:', err);
     }
