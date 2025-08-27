@@ -110,13 +110,13 @@ class Allonsh {
         );
       }
     }
-    this._unbindEventListeners();
 
     this.draggableElements = this.playAreaElement.querySelectorAll(
       `.${draggableSelector}`
     );
 
     this.draggableElements.forEach((element) => {
+      this._unbindEventListeners();
       element.style.cursor = 'grab';
       element.addEventListener('mousedown', this._boundMouseDown);
       element.addEventListener('touchstart', this._boundTouchStart, {
