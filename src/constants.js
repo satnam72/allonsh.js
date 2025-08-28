@@ -4,21 +4,13 @@
  */
 
 export const Z_INDEX = {
-  GHOST: 999,
-  DRAGGING: 1000,
-  DROPPED: 9999,
-  HEADER: 10,
-  THEME_TOGGLE: 9,
-  CONTROL_PANEL: 5,
-  FREEMODE_TITLE: 5,
+  GHOST: 99,
+  DRAGGING: 100,
 };
 
 export const DEFAULTS = {
   STACK_SPACING: 5,
-  STACK_SPACING_DEMO: 10,
   STACK_DIRECTION: 'horizontal',
-  STACK_DIRECTION_VERTICAL: 'vertical',
-  STACK_DIRECTION_HORIZONTAL: 'horizontal',
 };
 
 export const CSS_CLASSES = {
@@ -53,6 +45,11 @@ export const EVENTS = {
 export const FLEX_DIRECTIONS = {
   ROW: 'row',
   COLUMN: 'column',
+};
+
+export const STACK_DIRECTION = {
+  VERTICAL: 'vertical',
+  HORIZONTAL: 'horizontal',
 };
 
 export const FLEX_WRAP = 'wrap';

@@ -10,6 +10,7 @@ import {
   FLEX_WRAP,
   DISPLAY_MODES,
   POINTER_EVENTS,
+  STACK_DIRECTION,
 } from './constants.js';
 
 class Allonsh {
@@ -124,13 +125,13 @@ class Allonsh {
         );
       }
     }
-    this._unbindEventListeners();
 
     this.draggableElements = this.playAreaElement.querySelectorAll(
       `.${draggableSelector}`
     );
 
     this.draggableElements.forEach((element) => {
+      this._unbindEventListeners();
       element.style.cursor = CSS_CURSORS.GRAB;
       element.addEventListener('mousedown', this._boundMouseDown);
       element.addEventListener('touchstart', this._boundTouchStart, {
@@ -215,7 +216,7 @@ class Allonsh {
     try {
       dropzone.style.display = DISPLAY_MODES.FLEX;
       dropzone.style.flexDirection =
-        this.stackDirection === DEFAULTS.STACK_DIRECTION_VERTICAL
+        this.stackDirection === STACK_DIRECTION.VERTICAL
           ? FLEX_DIRECTIONS.COLUMN
           : FLEX_DIRECTIONS.ROW;
       dropzone.style.gap = `${this.stackSpacing}px`;
@@ -554,7 +555,7 @@ class Allonsh {
                 CSS_POSITIONS.ABSOLUTE;
               this.currentDraggedElement.style.left = `${offsetX}px`;
               this.currentDraggedElement.style.top = `${offsetY}px`;
-              this.currentDraggedElement.style.zIndex = Z_INDEX.DROPPED;
+              this.currentDraggedElement.style.zIndex = Z_INDEX.DRAGGING;
             } catch (e) {
               console.warn(
                 'Allonsh Warning: Could not append dragged element back to play area.',

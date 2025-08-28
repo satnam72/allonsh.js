@@ -35,26 +35,17 @@ Initialize Allonsh by importing the module and providing the required options.
 
 ```js
 import Allonsh from './allonsh.js';
-import { CSS_CLASSES, EVENTS } from './constants.js';
 
 // Initialize Allonsh with options
 const allonsh = new Allonsh({
-  draggableSelector: CSS_CLASSES.DRAGGABLE, // Required: class for draggable elements
-  dropzoneSelector: CSS_CLASSES.DROPZONE, // Optional: class for dropzones
+  draggableSelector: 'allonsh-draggable', // Required: class for draggable elements
+  dropzoneSelector: 'allonsh-dropzone', // Optional: class for dropzones
   playAreaSelector: 'play-area', // Optional: class for the container area
   restrictToDropzones: false, // Optional: restrict dragging to dropzones
   enableStacking: true, // Optional: enable stacking inside dropzones
   stackDirection: 'horizontal', // Optional: 'horizontal' or 'vertical'
   stackSpacing: 8, // Optional: spacing between stacked items (px)
   useGhostEffect: true, // Optional: enable ghost effect (shows transparent clone while dragging)
-});
-
-// Listen for custom events
-document.addEventListener(EVENTS.DRAG_START, (e) => {
-  // handle drag start
-});
-document.addEventListener(EVENTS.DROP, (e) => {
-  // handle drop
 });
 ```
 
