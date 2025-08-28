@@ -56,6 +56,12 @@ class Allonsh {
       console.warn(
         `Allonsh Warning: No draggable elements found with selector '.${draggableSelector}'.`
       );
+    } else {
+      this.draggableElements.forEach((element) => {
+        if (!element.classList.contains(CSS_CLASSES.DRAGGABLE)) {
+          element.classList.add(CSS_CLASSES.DRAGGABLE);
+        }
+      });
     }
 
     if (dropzoneSelector) {

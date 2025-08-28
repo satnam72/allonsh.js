@@ -164,4 +164,40 @@ describe('Allonsh', () => {
 
     expect(dropHandler).toHaveBeenCalled();
   });
+
+  it('should not duplicate event listeners on update', () => {
+    const el = allonsh.draggableElements[0];
+    const addSpy = vi.spyOn(el, 'addEventListener');
+
+    allonsh.update({ restrictToDropzones: true });
+    allonsh.update({ enableStacking: false });
+    allonsh.update({ useGhostEffect: false });
+
+    const mousedownAdds = addSpy.mock.calls.filter(
+      ([event]) => event === 'mousedown'
+    );
+    const touchstartAdds = addSpy.mock.calls.filter(
+      ([event]) => event === 'touchstart'
+    );
+
+    expect(mousedownAdds.length).toBeLessThanOrEqual(1);
+    expect(touchstartAdds.length).toBeLessThanOrEqual(1);
+
+    addSpy.mockRestore();
+  });
+
+  it('should preserve existing draggables and increment count by 1 when addDraggable() is called', () => {
+    const initialCount = allonsh.draggableElements.length;
+
+    const newEl = document.createElement('div');
+    newEl.className = 'draggable new';
+    document.querySelector('.play-area').appendChild(newEl);
+
+    allonsh.addDraggable(newEl);
+
+    const finalCount = allonsh.draggableElements.length;
+
+    expect(finalCount).toBe(initialCount + 1);
+    expect([...allonsh.draggableElements]).toContain(newEl);
+  });
 });
