@@ -6,23 +6,15 @@ This document provides a detailed reference for the constants defined in `src/co
 
 Defines z-index values for various UI elements to control stacking order:
 
-- `GHOST`: 999 — Used for ghost elements during drag operations.
-- `DRAGGING`: 1000 — Active dragging element.
-- `DROPPED`: 9999 — Element after being dropped.
-- `HEADER`: 10 — Header bar.
-- `THEME_TOGGLE`: 9 — Theme toggle button.
-- `CONTROL_PANEL`: 5 — Control panel UI.
-- `FREEMODE_TITLE`: 5 — Title in freemode.
+- `GHOST`: 99 — Used for ghost elements during drag operations.
+- `DRAGGING`: 100 — Active dragging element.
 
 ## DEFAULTS
 
 Default configuration values for stack layout and direction:
 
 - `STACK_SPACING`: 5 — Default spacing between stack items.
-- `STACK_SPACING_DEMO`: 10 — Spacing for demo mode.
 - `STACK_DIRECTION`: 'horizontal' — Default stack direction.
-- `STACK_DIRECTION_VERTICAL`: 'vertical' — Vertical stack direction.
-- `STACK_DIRECTION_HORIZONTAL`: 'horizontal' — Horizontal stack direction.
 
 ## CSS_CLASSES
 
@@ -157,7 +149,3 @@ import { EVENTS } from '../src/constants.js';
 const dropHandler = vi.fn();
 dropzone.addEventListener(EVENTS.DROP, dropHandler);
 ```
-
-### Usage in Demo
-
-In `demo/js/script.js`, constants are used indirectly via the Allonsh class, which applies them for styling, event handling, and configuration.
