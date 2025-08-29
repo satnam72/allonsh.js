@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0-beta] - 2025-08-29
+
+### Added
+
+- Introduced `.coderabbit.yaml` for integration with Coderabbit automation configuration.
+- Modularized Allonsh architecture:
+  - Added new modules: `EventManager.js`, `DragManager.js`, `DropzoneManager.js`, `StyleManager.js`.
+  - Extracted shared constants into `constants.js`.
+  - Updated `Allonsh.js` to orchestrate these modules, maintaining drag-and-drop functionality.
+- Updated test suite to support the modular structure.
+- Integrated ESLint using flat config to enforce consistent code quality.
+- Added Rollup bundler to generate distributable builds (`allonsh.js` and `allonsh.min.js`).
+
+### Changed
+
+- Removed redundant logic (e.g., duplicate style checks, repetitive error handling).
+- Standardized file naming: adopted PascalCase for class-based files (e.g., `Allonsh.js`, `EventManager.js`).
+
 ## [0.1.0] - 2025-08-23
 
 ### Stable Release
