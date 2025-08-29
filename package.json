@@ -10,7 +10,10 @@
     "test": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "lint:check": "eslint . --max-warnings=0"
   },
   "keywords": [
     "drag-and-drop",
@@ -42,6 +45,7 @@
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^9.34.0",
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
     "rollup": "^4.49.0",
