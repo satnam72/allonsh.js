@@ -16,7 +16,7 @@ media="(prefers-color-scheme: light)"
 
 Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.
 
-![Version Badge](https://img.shields.io/badge/Current_Version-v0.1.0-blue.svg)
+![Version Badge](https://img.shields.io/badge/Current_Version-v0.2.0--beta-blue.svg)
 
 ## Features
 

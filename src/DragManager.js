@@ -1,9 +1,4 @@
-import {
-  OPACITY,
-  Z_INDEX,
-  EVENTS,
-  POINTER_EVENTS,
-} from './constants.js';
+import { OPACITY, Z_INDEX, EVENTS, POINTER_EVENTS } from './constants.js';
 
 export class DragManager {
   constructor(
