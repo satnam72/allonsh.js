@@ -1,5 +1,3 @@
-import { CSS_CURSORS } from './constants.js';
-
 export class EventManager {
   constructor(dragManager, dropzoneManager, styleManager) {
     this.dragManager = dragManager;

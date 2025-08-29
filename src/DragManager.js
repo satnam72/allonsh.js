@@ -1,5 +1,4 @@
 import {
-  CSS_POSITIONS,
   OPACITY,
   Z_INDEX,
   EVENTS,
