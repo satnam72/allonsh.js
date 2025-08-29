@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import Allonsh from '../src/allonsh.js';
+import Allonsh from '../src/Allonsh.js';
 import { EVENTS } from '../src/constants.js';
 
 function createDOM() {
@@ -45,7 +45,7 @@ describe('Allonsh', () => {
   });
 
   it('should apply stacking styles to dropzones', () => {
-    allonsh.dropzoneElements.forEach((el) => {
+    allonsh.dropzoneManager.dropzoneElements.forEach((el) => {
       expect(el.style.display).toBe('flex');
     });
   });
@@ -74,12 +74,12 @@ describe('Allonsh', () => {
     document.querySelector('.play-area').appendChild(newDropzone);
 
     allonsh.setDropzones('custom-zone');
-    expect(allonsh.dropzoneElements.length).toBe(1);
+    expect(allonsh.dropzoneManager.dropzoneElements.length).toBe(1);
   });
 
   it('should reset all draggable elements', () => {
     const [el1, el2] = allonsh.draggableElements;
-    const dropzone = allonsh.dropzoneElements[0];
+    const dropzone = allonsh.dropzoneManager.dropzoneElements[0];
     dropzone.appendChild(el1);
     dropzone.appendChild(el2);
 
@@ -91,7 +91,7 @@ describe('Allonsh', () => {
 
   it('should create ghost element on drag start when enabled', () => {
     const el = allonsh.draggableElements[0];
-    const dropzone = allonsh.dropzoneElements[0];
+    const dropzone = allonsh.dropzoneManager.dropzoneElements[0];
 
     // Move the draggable element into a dropzone to simulate a real drag
     dropzone.appendChild(el);
@@ -121,46 +121,46 @@ describe('Allonsh', () => {
       toJSON: () => {},
     });
 
-    allonsh._startDrag({ currentTarget: el }, 110, 110);
+    allonsh.dragManager.startDrag({ currentTarget: el }, 110, 110);
 
-    expect(allonsh.ghostElement).toBeTruthy();
-    expect(allonsh.ghostElement.style.position).toBe('absolute');
+    expect(allonsh.dragManager.ghostElement).toBeTruthy();
+    expect(allonsh.dragManager.ghostElement.style.position).toBe('absolute');
   });
 
   it('should return to origin if dropped outside dropzone with restriction on', () => {
     const el = allonsh.draggableElements[0];
-    const dropzone = allonsh.dropzoneElements[0];
+    const dropzone = allonsh.dropzoneManager.dropzoneElements[0];
     dropzone.appendChild(el);
     allonsh.originalDropzone = dropzone;
     allonsh.currentDraggedElement = el;
 
-    allonsh._handleDrop(9999, 9999, new Event('mouseup'));
+    allonsh.dragManager.handleDrop(9999, 9999, new Event('mouseup'));
 
     expect(el.parentElement).toBe(dropzone);
   });
 
   it('should drop into a valid dropzone', () => {
     const el = allonsh.draggableElements[0];
-    const dropzone = allonsh.dropzoneElements[0];
+    const dropzone = allonsh.dropzoneManager.dropzoneElements[0];
 
     document.elementFromPoint = vi.fn(() => dropzone);
 
-    allonsh._startDrag({ currentTarget: el }, 110, 110);
-    allonsh._handleDrop(110, 110, new Event('mouseup'));
+    allonsh.dragManager.startDrag({ currentTarget: el }, 110, 110);
+    allonsh.dragManager.handleDrop(110, 110, new Event('mouseup'));
 
     expect(el.parentElement).toBe(dropzone);
   });
 
   it('should dispatch custom events on drop', () => {
     const el = allonsh.draggableElements[0];
-    const dropzone = allonsh.dropzoneElements[0];
+    const dropzone = allonsh.dropzoneManager.dropzoneElements[0];
     const dropHandler = vi.fn();
     dropzone.addEventListener(EVENTS.DROP, dropHandler);
 
     document.elementFromPoint = vi.fn(() => dropzone);
 
-    allonsh._startDrag({ currentTarget: el }, 100, 100);
-    allonsh._handleDrop(100, 100, new Event('mouseup'));
+    allonsh.dragManager.startDrag({ currentTarget: el }, 100, 100);
+    allonsh.dragManager.handleDrop(100, 100, new Event('mouseup'));
 
     expect(dropHandler).toHaveBeenCalled();
   });
