@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "build": "rollup -c",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "lint:check": "eslint . --max-warnings=0"
   },
   "keywords": [
     "drag-and-drop",
