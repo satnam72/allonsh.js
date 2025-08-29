@@ -1,4 +1,4 @@
-import Allonsh from '../../src/allonsh.js';
+import Allonsh from '../../src/Allonsh.js';
 
 const openPanelBtn = document.getElementById('openPanelBtn');
 const closePanelBtn = document.getElementById('closePanelBtn');
