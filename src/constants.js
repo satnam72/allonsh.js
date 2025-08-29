@@ -31,7 +31,7 @@ export const CSS_CURSORS = {
 };
 
 export const OPACITY = {
-  GHOST: '0.3',
+  GHOST: '0.5',
   FULL: '1',
 };
 
