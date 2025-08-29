@@ -2,14 +2,15 @@
   "name": "allonsh",
   "version": "0.2.0-beta",
   "description": "Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.",
-  "main": "src/allonsh.js",
+  "main": "src/Allonsh.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "vitest",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "build": "rollup -c"
   },
   "keywords": [
     "drag-and-drop",
@@ -38,8 +39,12 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
+    "rollup": "^4.49.0",
     "vitest": "^3.2.4"
   }
 }
