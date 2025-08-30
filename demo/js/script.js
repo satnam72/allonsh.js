@@ -1,30 +1,28 @@
 import Allonsh from '../../src/Allonsh.js';
 
-const openPanelBtn = document.getElementById('openPanelBtn');
-const closePanelBtn = document.getElementById('closePanelBtn');
+const bodyElements = {
+  openPanelBtn: document.getElementById('openPanelBtn'),
+  closePanelBtn: document.getElementById('closePanelBtn'),
 
-const controlPanel = document.getElementById('controlPanel');
+  controlPanel: document.getElementById('controlPanel'),
 
-const toggleStackCheckbox = document.getElementById('stackCheckbox');
-const ghostEffectCheckbox = document.getElementById('ghostEffectCheckbox');
+  toggleStackCheckbox: document.getElementById('stackCheckbox'),
+  ghostEffectCheckbox: document.getElementById('ghostEffectCheckbox'),
 
-const stackSpacingRange = document.getElementById('stackSpacingSlider');
-const stackSpacingCurrentValue = document.getElementById('spacingValue');
+  stackSpacingRange: document.getElementById('stackSpacingSlider'),
+  stackSpacingCurrentValue: document.getElementById('spacingValue'),
 
-const addItemBtn = document.getElementById('addItemBtn');
-const resetBtn = document.getElementById('reset-btn');
-const freemodeResetBtn = document.getElementById('reset-btn-freemode');
+  addItemBtn: document.getElementById('addItemBtn'),
+  resetBtn: document.getElementById('reset-btn'),
+  freemodeResetBtn: document.getElementById('reset-btn-freemode'),
 
-const verticalStackBtn = document.getElementById('verticalStackingBtn');
-const horizontalStackBtn = document.getElementById('horizontalStackingBtn');
+  verticalStackBtn: document.getElementById('verticalStackingBtn'),
+  horizontalStackBtn: document.getElementById('horizontalStackingBtn'),
 
-const draggableContainer = document.querySelector(
-  '.demo-playground__draggables'
-);
+  draggableContainer: document.querySelector('.demo-playground__draggables'),
 
-const restrictDropzoneCheckbox = document.getElementById(
-  'restrictDropzoneCheckbox'
-);
+  restrictDropzoneCheckbox: document.getElementById('restrictDropzoneCheckbox'),
+};
 
 let allonshInstance = null;
 let itemCountStartFrom = 1;
@@ -63,7 +61,7 @@ function addNewDraggables(total) {
     newDiv.style.position = 'relative';
     newDiv.style.left = '';
     newDiv.style.top = '';
-    draggableContainer.appendChild(newDiv);
+    bodyElements.draggableContainer.appendChild(newDiv);
     if (allonshInstance) {
       allonshInstance.addDraggable(newDiv);
     }
@@ -73,40 +71,40 @@ function addNewDraggables(total) {
 function refreshAllonsh() {
   if (allonshInstance) {
     allonshInstance.update({
-      enableStacking: toggleStackCheckbox.checked,
-      stackSpacing: Number(stackSpacingRange.value),
+      enableStacking: bodyElements.toggleStackCheckbox.checked,
+      stackSpacing: Number(bodyElements.stackSpacingRange.value),
       stackDirection: currentStackDirection,
-      restrictToDropzones: restrictDropzoneCheckbox.checked,
-      useGhostEffect: ghostEffectCheckbox.checked,
+      restrictToDropzones: bodyElements.restrictDropzoneCheckbox.checked,
+      useGhostEffect: bodyElements.ghostEffectCheckbox.checked,
     });
   } else {
     initAllonsh({
-      enableStacking: toggleStackCheckbox.checked,
-      stackSpacing: Number(stackSpacingRange.value),
+      enableStacking: bodyElements.toggleStackCheckbox.checked,
+      stackSpacing: Number(bodyElements.stackSpacingRange.value),
       stackDirection: currentStackDirection,
-      restrictToDropzones: restrictDropzoneCheckbox.checked,
-      useGhostEffect: ghostEffectCheckbox.checked,
+      restrictToDropzones: bodyElements.restrictDropzoneCheckbox.checked,
+      useGhostEffect: bodyElements.ghostEffectCheckbox.checked,
     });
   }
 }
 
 function updateStackDirectionButtons() {
   if (currentStackDirection === 'vertical') {
-    verticalStackBtn.classList.add('selected');
-    horizontalStackBtn.classList.remove('selected');
+    bodyElements.verticalStackBtn.classList.add('selected');
+    bodyElements.horizontalStackBtn.classList.remove('selected');
   } else {
-    verticalStackBtn.classList.remove('selected');
-    horizontalStackBtn.classList.add('selected');
+    bodyElements.verticalStackBtn.classList.remove('selected');
+    bodyElements.horizontalStackBtn.classList.add('selected');
   }
 }
 
 function setDefaultsOnLoad() {
   loadTheme();
-  toggleStackCheckbox.checked = enableStackingBool;
-  stackSpacingRange.value = stackSpacingDefault;
-  stackSpacingCurrentValue.textContent = `${stackSpacingDefault} px`;
-  restrictDropzoneCheckbox.checked = restrictDropzoneBool;
-  ghostEffectCheckbox.checked = ghostEffectBool;
+  bodyElements.toggleStackCheckbox.checked = enableStackingBool;
+  bodyElements.stackSpacingRange.value = stackSpacingDefault;
+  bodyElements.stackSpacingCurrentValue.textContent = `${stackSpacingDefault} px`;
+  bodyElements.restrictDropzoneCheckbox.checked = restrictDropzoneBool;
+  bodyElements.ghostEffectCheckbox.checked = ghostEffectBool;
 }
 
 addNewDraggables(4);
@@ -114,30 +112,30 @@ setDefaultsOnLoad();
 refreshAllonsh();
 updateStackDirectionButtons();
 
-stackSpacingRange.addEventListener('input', () => {
-  stackSpacingDefault = Number(stackSpacingRange.value);
-  stackSpacingCurrentValue.textContent = `${stackSpacingDefault} px`;
+bodyElements.stackSpacingRange.addEventListener('input', () => {
+  stackSpacingDefault = Number(bodyElements.stackSpacingRange.value);
+  bodyElements.stackSpacingCurrentValue.textContent = `${stackSpacingDefault} px`;
   refreshAllonsh();
 });
 
-toggleStackCheckbox.addEventListener('change', () => {
-  enableStackingBool = toggleStackCheckbox.checked;
+bodyElements.toggleStackCheckbox.addEventListener('change', () => {
+  enableStackingBool = bodyElements.toggleStackCheckbox.checked;
   refreshAllonsh();
 });
 
-ghostEffectCheckbox.addEventListener('change', () => {
+bodyElements.ghostEffectCheckbox.addEventListener('change', () => {
   ghostEffectBool = ghostEffectCheckbox.checked;
   refreshAllonsh();
 });
 
-addItemBtn.addEventListener('click', () => {
+bodyElements.addItemBtn.addEventListener('click', () => {
   addNewDraggables(1);
   refreshAllonsh();
 });
 
-resetBtn.addEventListener('click', () => {
+bodyElements.resetBtn.addEventListener('click', () => {
   emptyDropzones();
-  draggableContainer.innerHTML = '';
+  bodyElements.draggableContainer.innerHTML = '';
   itemCountStartFrom = 1;
   enableStackingBool = true;
   restrictDropzoneBool = true;
@@ -151,7 +149,7 @@ resetBtn.addEventListener('click', () => {
   refreshAllonsh();
 });
 
-verticalStackBtn.addEventListener('click', () => {
+bodyElements.verticalStackBtn.addEventListener('click', () => {
   if (currentStackDirection !== 'vertical') {
     currentStackDirection = 'vertical';
     updateStackDirectionButtons();
@@ -159,14 +157,14 @@ verticalStackBtn.addEventListener('click', () => {
   }
 });
 
-horizontalStackBtn.addEventListener('click', () => {
+bodyElements.horizontalStackBtn.addEventListener('click', () => {
   if (currentStackDirection !== 'horizontal') {
     currentStackDirection = 'horizontal';
     updateStackDirectionButtons();
     refreshAllonsh();
   }
 });
-restrictDropzoneCheckbox.addEventListener('change', () => {
+bodyElements.restrictDropzoneCheckbox.addEventListener('change', () => {
   restrictDropzoneBool = restrictDropzoneCheckbox.checked;
   if (restrictDropzoneBool) {
     logDraggablesOutsideDropzones();
@@ -186,16 +184,16 @@ function logDraggablesOutsideDropzones() {
       element.style.position = 'relative';
       element.style.left = '';
       element.style.top = '';
-      draggableContainer.appendChild(element);
+      bodyElements.draggableContainer.appendChild(element);
     }
   });
 }
 
-openPanelBtn.addEventListener('click', () => {
+bodyElements.openPanelBtn.addEventListener('click', () => {
   togglePanel();
 });
 
-closePanelBtn.addEventListener('click', () => {
+bodyElements.closePanelBtn.addEventListener('click', () => {
   togglePanel();
 });
 
@@ -242,7 +240,7 @@ new Allonsh({
   playAreaSelector: 'demo-freemode',
 });
 
-freemodeResetBtn.addEventListener('click', () => {
+bodyElements.freemodeResetBtn.addEventListener('click', () => {
   document.querySelectorAll('.freemode-draggable').forEach((element) => {
     element.removeAttribute('style');
   });
