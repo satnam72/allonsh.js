@@ -1,5 +1,19 @@
 import Allonsh from '../../src/Allonsh.js';
 
+let allonshInstance = null;
+let itemCountStartFrom = 1;
+
+const draggableSelectorClass = 'draggable';
+const dropzoneSelectorClass = 'dropzone';
+const playAreaSelectorClass = 'demo-section__playground';
+
+let currentStackDirection = 'horizontal';
+let enableStackingBool = true;
+let restrictDropzoneBool = true;
+
+let ghostEffectBool = true;
+let stackSpacingDefault = 10;
+
 const bodyElements = {
   openPanelBtn: document.getElementById('openPanelBtn'),
   closePanelBtn: document.getElementById('closePanelBtn'),
@@ -22,25 +36,21 @@ const bodyElements = {
   draggableContainer: document.querySelector('.demo-playground__draggables'),
 
   restrictDropzoneCheckbox: document.getElementById('restrictDropzoneCheckbox'),
+  currentTheme: document.getElementById('current-theme'),
 };
 
-let allonshInstance = null;
-let itemCountStartFrom = 1;
+const checkElement = (element) => element !== null && element !== undefined;
 
-const draggableSelectorClass = 'draggable';
-const dropzoneSelectorClass = 'dropzone';
-const playAreaSelectorClass = 'demo-section__playground';
-
-let currentStackDirection = 'horizontal';
-let enableStackingBool = true;
-let restrictDropzoneBool = true;
-
-let ghostEffectBool = true;
-let stackSpacingDefault = 10;
+function checkBodyElement(obj) {
+  for (let key in obj) {
+    if (!checkElement(obj[key])) {
+      throw new Error(`The value of '${key}' is null or undefined!`);
+    }
+  }
+}
 
 function initAllonsh(options) {
-  if (allonshInstance) {
-  }
+  if (allonshInstance) return;
   allonshInstance = new Allonsh({
     draggableSelector: draggableSelectorClass,
     dropzoneSelector: dropzoneSelectorClass,
@@ -100,6 +110,7 @@ function updateStackDirectionButtons() {
 
 function setDefaultsOnLoad() {
   loadTheme();
+  checkBodyElement(bodyElements);
   bodyElements.toggleStackCheckbox.checked = enableStackingBool;
   bodyElements.stackSpacingRange.value = stackSpacingDefault;
   bodyElements.stackSpacingCurrentValue.textContent = `${stackSpacingDefault} px`;
@@ -124,7 +135,7 @@ bodyElements.toggleStackCheckbox.addEventListener('change', () => {
 });
 
 bodyElements.ghostEffectCheckbox.addEventListener('change', () => {
-  ghostEffectBool = ghostEffectCheckbox.checked;
+  ghostEffectBool = bodyElements.ghostEffectCheckbox.checked;
   refreshAllonsh();
 });
 
@@ -165,14 +176,14 @@ bodyElements.horizontalStackBtn.addEventListener('click', () => {
   }
 });
 bodyElements.restrictDropzoneCheckbox.addEventListener('change', () => {
-  restrictDropzoneBool = restrictDropzoneCheckbox.checked;
+  restrictDropzoneBool = bodyElements.restrictDropzoneCheckbox.checked;
   if (restrictDropzoneBool) {
-    logDraggablesOutsideDropzones();
+    moveDraggablesToDropzones();
   }
   refreshAllonsh();
 });
 
-function logDraggablesOutsideDropzones() {
+function moveDraggablesToDropzones() {
   const playAreaElement = document.querySelector(`.${playAreaSelectorClass}`);
 
   playAreaElement.querySelectorAll('.draggable').forEach((element) => {
@@ -198,7 +209,7 @@ bodyElements.closePanelBtn.addEventListener('click', () => {
 });
 
 function togglePanel() {
-  controlPanel.classList.toggle('open');
+  bodyElements.controlPanel.classList.toggle('open');
 }
 
 function emptyDropzones() {
@@ -218,16 +229,16 @@ function toggleTheme() {
   );
 
   document.body.classList.contains('night')
-    ? (document.getElementById('current-theme').src = 'img/sun.svg')
-    : (document.getElementById('current-theme').src = 'img/moon.svg');
+    ? (bodyElements.currentTheme.src = 'img/sun.svg')
+    : (bodyElements.currentTheme.src = 'img/moon.svg');
 }
 
 function loadTheme() {
   if (localStorage.getItem('theme') === 'night') {
     document.body.classList.add('night');
-    document.getElementById('current-theme').src = 'img/sun.svg';
+    bodyElements.currentTheme.src = 'img/sun.svg';
   } else {
-    document.getElementById('current-theme').src = 'img/moon.svg';
+    bodyElements.currentTheme.src = 'img/moon.svg';
   }
 }
 
