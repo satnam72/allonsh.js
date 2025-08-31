@@ -111,6 +111,25 @@ body {
 .demo-header__github path {
   fill: var(--text-color);
 }
+
+.github-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.github-links__docs {
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text-color);
+  transition: border 500ms;
+}
+
+.github-links__docs:hover {
+  border-bottom: 5px solid var(--text-color);
+  transition: border 500ms;
+}
 /* Main Title */
 .spaced-top {
   margin-top: 7rem;
