@@ -460,6 +460,14 @@ body.night .demo-section__playground {
     right: 1rem;
   }
 
+  .github-links__docs {
+    position: absolute;
+    bottom: -2rem;
+    padding: 0.3rem;
+    border-radius: 0.2rem;
+    right: 0;
+  }
+
   .demo-control-panel {
     position: fixed;
     bottom: 1rem;
