@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0-rc] - 2025-09-07
+
+### Added
+
+- Added support for ESM builds to generate ES modules
+
 ## [0.2.0-beta] - 2025-08-29
 
 ### Added

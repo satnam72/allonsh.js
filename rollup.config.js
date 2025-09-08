@@ -19,6 +19,17 @@ export default [
         plugins: [terser()],
         sourcemap: false,
       },
+      {
+        file: 'dist/allonsh.esm.js',
+        format: 'es',
+        sourcemap: false,
+      },
+      {
+        file: 'dist/allonsh.esm.min.js',
+        format: 'es',
+        plugins: [terser()],
+        sourcemap: false,
+      },
     ],
     plugins: [resolve(), commonjs()],
   },
