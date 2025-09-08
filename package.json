@@ -1,6 +1,6 @@
 {
   "name": "allonsh",
-  "version": "0.2.0-beta",
+  "version": "0.2.0-rc",
   "description": "Lightweight, dependency-free drag-and-drop with precise native target detection and easy customization.",
   "main": "src/Allonsh.js",
   "directories": {
